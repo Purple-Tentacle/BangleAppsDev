@@ -16,4 +16,4 @@ Have your own Pip-Boy (based on Java Script)
 
 ## Requests
 
-If you have any feature requests, please contact the original author https://twitter.com/simons_bird or send an email to the co-author `christian@hemker.de`
+If you have any feature requests, please contact the original author https://twitter.com/simons_bird or co-author http://forum.espruino.com/profiles/155005/
