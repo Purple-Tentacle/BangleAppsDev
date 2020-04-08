@@ -70,8 +70,6 @@ function bottomLine() {
   g.drawString("LEVEL " + day, 100, 192); //show week day
   g.drawRect(127, 192, 235, 198); //frame
   g.fillRect(128, 193, 128 + ((107/24)*h), 197); //progress bar showing progress of day
-  print(127 + ((108/24)*h));
-  
 }
 
 function boy() {
