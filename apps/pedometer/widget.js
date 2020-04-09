@@ -49,17 +49,8 @@
         active = 1; //set active
         clearInterval(timerResetActive); //stop timer which resets active
         timerResetActive = setInterval(resetActive, intervalResetActive); //reset active after timer runs out
-
-         //Check if same day
-        let date = new Date();
-        if (lastUpdate.getDate() == date.getDate()){ //if same day
-          stepsCounted += steps; //count steps
-        }
-        else {
-          stepsCounted = 1; //set stepcount to 1
-        }
-        lastUpdate = date;
-
+        
+        stepsCounted += steps; //count steps
         steps = 0; //reset steps
       }
       else { //more than 10 seconds have passed OR active is 0: increase step count
@@ -81,6 +72,19 @@
     var width = 35;
     var height = 23;
     var stepsDisplayLarge = kFormatter(stepsCounted);
+    
+    //Check if same day
+    let date = new Date();
+    if (debug == 1) print("---" + lastUpdate.getDate());
+    if (lastUpdate.getDate() == date.getDate()){ //if same day
+      if (debug == 1) print("---same day");
+    }
+    else {
+      stepsCounted = 1; //set stepcount to 1
+      if (debug == 1) print("---different day");
+    }
+    lastUpdate = date;
+    
     g.reset();
     g.clearRect(this.x, this.y, this.x+width, this.y+height);
     //if (debug == 1) g.drawRect(this.x,this.y,this.x+width,this.y+height); //draw rectangle around widget area
