@@ -66,7 +66,7 @@
   //Set Active to 0
   function resetActive() {
     if (debug == 1) print("---------------Function resetActive");
-    if (diff < 20) active=0; //reset active, but only if step treshold timer has not run out
+    if (diff < 20 || diff == undefined) active=0; //reset active, but only if step treshold timer has not run out
     calcSteps();
     WIDGETS["steps"].draw();
   }
@@ -105,8 +105,6 @@
     stepGoalPercent = (stepsCounted / stepGoal) * 100;
     stepGoalBarLength = width / 100 * stepGoalPercent;
     if (stepGoalBarLength > width) stepGoalBarLength = width; //do not draw across width of widget
-    print("     %: " + stepGoalPercent);
-    print("Length: " + stepGoalBarLength);
     g.fillRect(this.x, this.y+height, this.x+1, this.y+height-1); //draw start of bar
     g.fillRect(this.x+width, this.y+height, this.x+width-1, this.y+height-1); //draw end of bar
     g.fillRect(this.x, this.y+height, this.x+stepGoalBarLength, this.y+height); // draw progress bar
