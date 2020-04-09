@@ -4,7 +4,9 @@
   var startTime = new Date();//set start time
   var stepThreshold = 20; //steps needed for threshold
   var stopTime; //stop time
-  var diff; //difference between start and end time
+  var stopTimeResetActive; //stop time to check in resetActive function
+  var diff = 9999; //difference between start and end time
+  var diffResetActive = 9999; //difference between start and stop in resetActive function
   var active = 0; //x steps in y seconds achieved
   var activeSeconds = 20; //in how many seconds dou you have to reach 10 steps so that they are counted
   var x = 0; //x position on screen
@@ -23,11 +25,12 @@
 
   //print debug info
   function printDebug() {
-    print ("Settings:" + stepThreshold + "/" + activeSeconds);
+    print ("Settings:" + stepThreshold + "/" + activeSeconds + "/" + intervalResetActive);
     print ("Active: " + active);
     print ("Steps: " + steps);
     print ("Steps counted: " + stepsCounted);
     print ("Timediff " + diff);
+    print ("Timediff resetActive: " + diffResetActive);
     print ("----");
   }
 
@@ -42,13 +45,12 @@
 
   function calcSteps() {
     if (debug == 1) print("Function calcStep"); //Debug info
-
     if (steps >= stepThreshold) { //steps reached threshold
       stopTime = new Date(); //set end time
-      diff = (stopTime.getTime() - startTime.getTime()) / 1000; //endtime - start time
+      diff = (stopTime.getTime() - startTime.getTime()) / 1000; //endtime - start time in seconds
       if (diff >= activeSeconds) startTime = new Date(); //set new start time after activeSeconds have passed
       if (diff <= activeSeconds || active == 1) { //less than activeSeconds have passed OR active is 1: increase step count
-        if (debug == 1) print("Active condition met");
+        if (debug == 1) print("--------Active condition met");
         active = 1; //set active
         clearInterval(timerResetActive); //stop timer which resets active
         timerResetActive = setInterval(resetActive, intervalResetActive); //reset active after timer runs out
@@ -65,9 +67,13 @@
 
   //Set Active to 0
   function resetActive() {
+    stopTimeResetActive = new Date(); //set end time
+    diffResetActive = (stopTimeResetActive.getTime() - startTime.getTime()) / 1000; //endtime - start time in seconds
     if (debug == 1) print("---------------Function resetActive");
-    if (diff < 20 || diff == undefined) active=0; //reset active, but only if step treshold timer has not run out
+    if (diffResetActive > activeSeconds) active=0; //reset active, but only if step treshold timer has not run out
+    //active = 0;
     calcSteps();
+    if (debug == 1) printDebug();
     WIDGETS["steps"].draw();
   }
 
@@ -105,6 +111,9 @@
     stepGoalPercent = (stepsCounted / stepGoal) * 100;
     stepGoalBarLength = width / 100 * stepGoalPercent;
     if (stepGoalBarLength > width) stepGoalBarLength = width; //do not draw across width of widget
+    g.setColor(0x7BEF);
+    g.fillRect(this.x, this.y+height, this.x+width, this.y+height); // draw bar
+    g.setColor(0xFFFF);
     g.fillRect(this.x, this.y+height, this.x+1, this.y+height-1); //draw start of bar
     g.fillRect(this.x+width, this.y+height, this.x+width-1, this.y+height-1); //draw end of bar
     g.fillRect(this.x, this.y+height, this.x+stepGoalBarLength, this.y+height); // draw progress bar
@@ -122,7 +131,7 @@
 
   //When Step is registered by firmware
   Bangle.on('step', (up) => {
-    let date = new Date();
+    //let date = new Date();
     steps++; //increase step count
     calcSteps();
     if (debug ==1) printDebug();
