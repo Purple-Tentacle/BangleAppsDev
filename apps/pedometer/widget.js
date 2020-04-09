@@ -9,6 +9,9 @@
   var activeSeconds = 20; //in how many seconds dou you have to reach 10 steps so that they are counted
   var x = 0; //x position on screen
   var y = 40; //y position on screen
+  var stepGoal = 10000; //TODO: defne in settings
+  var stepGoalPercent = 0; //percentage of step goal
+  var stepGoalBarLength = 0; //length og progress bar
   //var timerCalc = 0; //used to periodically start step calculation
   //var intervalCalc = 30000; //how often should step calculation be done (is always done after a step), in ms
   var timerResetActive = 0; //timer to reset active
@@ -88,13 +91,25 @@
     g.reset();
     g.clearRect(this.x, this.y, this.x+width, this.y+height);
     //if (debug == 1) g.drawRect(this.x,this.y,this.x+width,this.y+height); //draw rectangle around widget area
+    
+    //draw numbers
     if (active == 1) g.setColor(0x07E0); //green
     else g.setColor(0xFFE0); //yellow
     g.setFont("6x8", 2);
-    g.drawString(stepsDisplayLarge,this.x+1,this.y); //first line
+    g.drawString(stepsDisplayLarge,this.x+1,this.y);  //first line, big number
     g.setFont("6x8", 1);
     g.setColor(0xFFFF);
-    g.drawString(stepsCounted,this.x+1,this.y+15); //second line
+    g.drawString(stepsCounted,this.x+1,this.y+14); //second line, small number
+    
+    //draw step goal bar
+    stepGoalPercent = (stepsCounted / stepGoal) * 100;
+    stepGoalBarLength = width / 100 * stepGoalPercent;
+    if (stepGoalBarLength > width) stepGoalBarLength = width; //do not draw across width of widget
+    print("     %: " + stepGoalPercent);
+    print("Length: " + stepGoalBarLength);
+    g.fillRect(this.x, this.y+height, this.x+1, this.y+height-1); //draw start of bar
+    g.fillRect(this.x+width, this.y+height, this.x+width-1, this.y+height-1); //draw end of bar
+    g.fillRect(this.x, this.y+height, this.x+stepGoalBarLength, this.y+height); // draw progress bar
   }
 
   //This event is called just before the device shuts down for commands such as reset(), load(), save(), E.reboot() or Bangle.off()
