@@ -85,12 +85,12 @@
     g.clearRect(this.x, this.y, this.x+width, this.y+height);
     //if (debug == 1) g.drawRect(this.x,this.y,this.x+width,this.y+height); //draw rectangle around widget area
     if (active == 1) g.setColor(0x07E0); //green
-    else g.setColor(0xF800); //red
+    else g.setColor(0xFFE0); //yellow
     g.setFont("6x8", 2);
-    g.drawString(stepsDisplayLarge,this.x+1,this.y);
+    g.drawString(stepsDisplayLarge,this.x+1,this.y); //first line
     g.setFont("6x8", 1);
     g.setColor(0xFFFF);
-    g.drawString(stepsCounted,this.x+1,this.y+15);
+    g.drawString(stepsCounted,this.x+1,this.y+15); //second line
   }
 
   //This event is called just before the device shuts down for commands such as reset(), load(), save(), E.reboot() or Bangle.off()
