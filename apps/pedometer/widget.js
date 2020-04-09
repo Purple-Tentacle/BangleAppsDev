@@ -43,8 +43,8 @@
     if (steps >= stepThreshold) { //steps reached threshold
       stopTime = new Date(); //set end time
       diff = (stopTime.getTime() - startTime.getTime()) / 1000; //endtime - start time
-      if (diff >= 20) startTime = new Date(); //set new start time after 20 seconds have passed
-      if (diff <= activeSeconds || active == 1) { //less than 10 seconds have passed OR active is 1: increase step count
+      if (diff >= activeSeconds) startTime = new Date(); //set new start time after activeSeconds have passed
+      if (diff <= activeSeconds || active == 1) { //less than activeSeconds have passed OR active is 1: increase step count
         if (debug == 1) print("Active condition met");
         active = 1; //set active
         clearInterval(timerResetActive); //stop timer which resets active
@@ -62,8 +62,8 @@
 
   //Set Active to 0
   function resetActive() {
-    if (debug == 1) print("Function resetActive");
-    active=0;
+    if (debug == 1) print("---------------Function resetActive");
+    if (diff < 20) active=0; //reset active, but only if step treshold timer has not run out
     calcSteps();
     WIDGETS["steps"].draw();
   }
@@ -75,13 +75,13 @@
     
     //Check if same day
     let date = new Date();
-    if (debug == 1) print("---" + lastUpdate.getDate());
+    //if (debug == 1) print("---" + lastUpdate.getDate());
     if (lastUpdate.getDate() == date.getDate()){ //if same day
-      if (debug == 1) print("---same day");
+      //if (debug == 1) print("---same day");
     }
     else {
       stepsCounted = 1; //set stepcount to 1
-      if (debug == 1) print("---different day");
+      //if (debug == 1) print("---different day");
     }
     lastUpdate = date;
     
