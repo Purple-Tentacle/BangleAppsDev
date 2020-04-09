@@ -31,7 +31,7 @@
   //format number > 999 as 1k, 10k etc. to make them shorter
   function kFormatter(num) {
     if (num > 999) {
-      num = Math.round(num/1000)*1000;
+      num = Math.floor(num/1000)*1000;
       return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
     }
     else return num;
