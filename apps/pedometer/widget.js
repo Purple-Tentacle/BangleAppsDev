@@ -63,8 +63,6 @@
   function calcSteps() {
     if (debug == 1) print("Function calcStep"); //Debug info
 
-    steps++;
-
     //Calculate time between first and second step
     if (stepStart == true) {
       startTimeStep = new Date(); //start time after fist step
@@ -87,8 +85,9 @@
     }
 
     //Calculate step threshold
+    stopTime = new Date(); //set end time
     if (steps >= stepThreshold) { //steps reached threshold
-      stopTime = new Date(); //set end time
+      
       diff = (stopTime.getTime() - startTime.getTime()) / 1000; //endtime - start time, in seconds
 
       if (diff >= activeSeconds) startTime = new Date(); //set new start time after activeSeconds have passed
