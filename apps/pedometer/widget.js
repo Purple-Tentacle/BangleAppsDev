@@ -1,23 +1,22 @@
 (() => {
+  var stepThreshold = 20; //steps needed for threshold
+  var activeSeconds = 20; //in how many seconds dou you have to reach 10 steps so that they are counted
+  var intervalResetActive = 30000; //interval for timer to reset active, in ms
+
   var steps = 0; //steps taken
   var stepsCounted = 0; //active steps counted
   var startTime = new Date();//set start time
-  var stepThreshold = 20; //steps needed for threshold
   var stopTime; //stop time
   var stopTimeResetActive; //stop time to check in resetActive function
   var diff = 9999; //difference between start and end time
   var diffResetActive = 9999; //difference between start and stop in resetActive function
   var active = 0; //x steps in y seconds achieved
-  var activeSeconds = 20; //in how many seconds dou you have to reach 10 steps so that they are counted
   var x = 0; //x position on screen
   var y = 40; //y position on screen
   var stepGoal = 10000; //TODO: defne in settings
   var stepGoalPercent = 0; //percentage of step goal
   var stepGoalBarLength = 0; //length og progress bar
-  //var timerCalc = 0; //used to periodically start step calculation
-  //var intervalCalc = 30000; //how often should step calculation be done (is always done after a step), in ms
   var timerResetActive = 0; //timer to reset active
-  var intervalResetActive = 30000; //interval for timer to reset active, in ms
   const PEDOMFILE = "steps.json";
   var lastUpdate = new Date();
 
@@ -84,13 +83,10 @@
     
     //Check if same day
     let date = new Date();
-    //if (debug == 1) print("---" + lastUpdate.getDate());
     if (lastUpdate.getDate() == date.getDate()){ //if same day
-      //if (debug == 1) print("---same day");
     }
     else {
       stepsCounted = 1; //set stepcount to 1
-      //if (debug == 1) print("---different day");
     }
     lastUpdate = date;
     
@@ -143,10 +139,10 @@
     if (on) WIDGETS["steps"].draw();
   });
 
-  //set timers
-  //timerCalc = setInterval(calcSteps, intervalCalc); //calculate steps periodically
+  //set timer
   timerResetActive = setInterval(resetActive, intervalResetActive); //reset active after timer runs out
 
+  //Read data from file and set variables
   let pedomData = require("Storage").readJSON(PEDOMFILE,1);
   if (pedomData) {
     if (pedomData.lastUpdate) lastUpdate = new Date(pedomData.lastUpdate);
