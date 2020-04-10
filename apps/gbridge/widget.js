@@ -194,9 +194,6 @@
 
   gbSend({ t: "status", bat: E.getBattery() });
 
-
-  gbSend({ t: "status", bat: E.getBattery() });
-
   setWatch(function() { //BTN1
     if (state.music == "pause" || state.music == "stop") Bluetooth.println(JSON.stringify({t:"music", n:"play"}));
     else Bluetooth.println(JSON.stringify({t:"music", n:"pause"}));
