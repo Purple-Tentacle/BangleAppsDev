@@ -63,6 +63,8 @@
   function calcSteps() {
     if (debug == 1) print("Function calcStep"); //Debug info
 
+    steps++;
+
     //Calculate time between first and second step
     stepStart = !stepStart;
     if (stepStart == true) {
@@ -89,17 +91,22 @@
     if (steps >= stepThreshold) { //steps reached threshold
       stopTime = new Date(); //set end time
       diff = (stopTime.getTime() - startTime.getTime()) / 1000; //endtime - start time in seconds
+
       if (diff >= activeSeconds) startTime = new Date(); //set new start time after activeSeconds have passed
-      if (diff <= activeSeconds || active == 1) { //less than activeSeconds have passed OR active is 1: increase step count
-        if (debug == 1) print("--------Active condition met");
+      if (diff <= activeSeconds) { //less than activeSeconds have passed
+        if (debug == 1) print("-----Active condition met");
         active = 1; //set active
         clearInterval(timerResetActive); //stop timer which resets active
-        timerResetActive = setInterval(resetActive, intervalResetActive); //start timer which resets active after timer runs out
-        
+      }
+      else { //more than 10 seconds have passed start timer to reset active
+        timerResetActive = setInterval(resetActive, intervalResetActive); //reset active after timer runs out
+      }
+
+      if (active == 1) {
         stepsCounted += steps; //count steps
         steps = 0; //reset steps
       }
-      else { //more than 10 seconds have passed OR active is 0: increase step count
+      else {
         steps = 0; //do nout count steps, reset steps
         startTime = new Date(); //set start time
       }
@@ -180,9 +187,6 @@
   Bangle.on('lcdPower', function(on) {
     if (on) WIDGETS["steps"].draw();
   });
-
-  //set timer
-  timerResetActive = setInterval(resetActive, intervalResetActive); //reset active after timer runs out
 
   //Read data from file and set variables
   let pedomData = require("Storage").readJSON(PEDOMFILE,1);
