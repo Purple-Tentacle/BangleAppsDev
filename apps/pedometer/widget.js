@@ -3,6 +3,7 @@
   var activeSeconds = 20; //in how many seconds dou you have to reach 10 steps so that they are counted
   var intervalResetActive = 30000; //interval for timer to reset active, in ms
   var stepGoal = 10000; //TODO: defne in settings
+  const stepSensitivity = 700; //set step sensitivity (80 is standard, 400 is muss les sensitive)
 
   var steps = 0; //steps taken
   var stepsCounted = 0; //active steps counted
@@ -24,13 +25,20 @@
 
   //print debug info
   function printDebug() {
-    print ("Settings:" + stepThreshold + "/" + activeSeconds + "/" + intervalResetActive);
+    print ("Settings:" + stepThreshold + "/" + activeSeconds + "/" + intervalResetActive + "/" + stepSensitivity);
     print ("Active: " + active);
     print ("Steps: " + steps);
     print ("Steps counted: " + stepsCounted);
     print ("Timediff " + diff);
     print ("Timediff resetActive: " + diffResetActive);
     print ("----");
+  }
+
+  function setStepSensitivity(s) {
+    function sqr(x) { return x*x; }
+    var X=sqr(8192-s);
+    var Y=sqr(8192+s);
+    Bangle.setOptions({stepCounterThresholdLow:X,stepCounterThresholdHigh:Y});
   }
 
   //format number > 999 as 1k, 10k etc. to make them shorter
@@ -149,6 +157,8 @@
     stepsCounted = pedomData.stepsToday|0;
     active = pedomData.active;
   }
+
+  setStepSensitivity(stepSensitivity) //set step sensitivity (80 is standard, 400 is muss les sensitive)
 
   //Add widget
   WIDGETS["steps"]={area:"tl",width:40,draw:draw};
