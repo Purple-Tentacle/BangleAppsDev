@@ -66,12 +66,11 @@
     steps++;
 
     //Calculate time between first and second step
-    stepStart = !stepStart;
     if (stepStart == true) {
-      startTimeStep = new Date(); //start time after step and step calculation
+      startTimeStep = new Date(); //start time after fist step
     }
     else {
-      stopTimeStep = new Date(); //stop time for step duration calculation
+      stopTimeStep = new Date(); //stop time after second step
       stepTimeDiff = stopTimeStep - startTimeStep; //time between steps in milliseconds
     }
 
@@ -90,7 +89,7 @@
     //Calculate step threshold
     if (steps >= stepThreshold) { //steps reached threshold
       stopTime = new Date(); //set end time
-      diff = (stopTime.getTime() - startTime.getTime()) / 1000; //endtime - start time in seconds
+      diff = (stopTime.getTime() - startTime.getTime()) / 1000; //endtime - start time, in seconds
 
       if (diff >= activeSeconds) startTime = new Date(); //set new start time after activeSeconds have passed
       if (diff <= activeSeconds) { //less than activeSeconds have passed
@@ -98,7 +97,7 @@
         active = 1; //set active
         clearInterval(timerResetActive); //stop timer which resets active
       }
-      else { //more than 10 seconds have passed start timer to reset active
+      else { //more than activeSeconds seconds have passed, start timer to reset active
         timerResetActive = setInterval(resetActive, intervalResetActive); //reset active after timer runs out
       }
 
@@ -119,8 +118,6 @@
     diffResetActive = (stopTimeResetActive.getTime() - startTime.getTime()) / 1000; //endtime - start time in seconds
     if (debug == 1) print("---------------Function resetActive");
     if (diffResetActive > activeSeconds) active=0; //reset active, but only if step treshold timer has not run out
-    //active = 0;
-    calcSteps();
     if (debug == 1) printDebug();
     WIDGETS["steps"].draw();
   }
@@ -178,6 +175,7 @@
   Bangle.on('step', (up) => {
     //let date = new Date();
     steps++; //increase step count
+    stepStart = !stepStart;
     calcSteps();
     if (debug ==1) printDebug();
     if (Bangle.isLCDOn()) WIDGETS["steps"].draw();
