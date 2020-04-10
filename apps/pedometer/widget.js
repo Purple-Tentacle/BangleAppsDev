@@ -29,6 +29,10 @@
   const PEDOMFILE = "steps.json";
   var lastUpdate = new Date();
 
+  var stepsTooShort = 0;
+  var stepsTooLong = 0;
+  var stepsOutsideTime = 0;
+
   var debug = 1; //1=show debug information
 
   //print debug info
@@ -79,12 +83,14 @@
     //Remove step if time between first and second step is too long
     if (stepTimeDiff >= cMaxTime) { //milliseconds
       if (debug ==1 ) print ("------ Too long")
+      stepsTooLong++; //count steps which are note counted, because time too long
       steps--;
     }
 
     //Remove step if time between first and second step is too short
     if (stepTimeDiff <= cMinTime) { //milliseconds
       if (debug ==1 ) print ("------ Too short")
+      stepsTooShort++; //count steps which are note counted, because time too short
       steps--;
     }
 
@@ -109,6 +115,7 @@
         steps = 0; //reset steps
       }
       else {
+        stepsOutsideTime += steps; //count steps which are note counted, because threshold time too long
         steps = 0; //do nout count steps, reset steps
         startTime = new Date(); //set start time
       }
@@ -195,6 +202,9 @@
     if (pedomData.lastUpdate) lastUpdate = new Date(pedomData.lastUpdate);
     stepsCounted = pedomData.stepsToday|0;
     active = pedomData.active;
+    stepsTooShort = pedomData.stepsTooShort;
+    stepsTooLong = pedomData.stepsTooLong;
+    stepsOutsideTime = pedomData.stepsOutsideTime;
   }
 
   setStepSensitivity(stepSensitivity) //set step sensitivity (80 is standard, 400 is muss les sensitive)
