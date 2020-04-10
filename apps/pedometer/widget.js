@@ -3,7 +3,7 @@
   var activeSeconds = 10; //in how many seconds dou you have to reach 10 steps so that they are counted
   var intervalResetActive = 30000; //interval for timer to reset active, in ms
   var stepGoal = 10000; //TODO: defne in settings
-  const stepSensitivity = 300; //set step sensitivity (80 is standard, 400 is much less sensitive)
+  const stepSensitivity = 80; //set step sensitivity (80 is standard, 400 is much less sensitive)
 
   var stepStart = false; //toggles each step to start or stop time
   var startTimeStep = 0; //set start time
@@ -51,13 +51,17 @@
     Bangle.setOptions({stepCounterThresholdLow:X,stepCounterThresholdHigh:Y});
   }
 
-  //format number > 999 as 1k, 10k etc. to make them shorter
+  //format number to make them shorter
   function kFormatter(num) {
-    if (num > 999) {
-      num = Math.floor(num/1000)*1000;
-      return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+    if (num <= 999) return num; //smaller 1.000, return 600 as 600
+    if (num >= 1000 && num < 10000) { //between 1.000 and 10.000
+      num = Math.floor(num/100)*100;
+      return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k'; //return 1600 as 1.6k
     }
-    else return num;
+    if (num >= 10000) { //greater 10.000
+      num = Math.floor(num/1000)*1000;
+      return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k'; //return 10.600 as 10k
+    }
   }
 
   function calcSteps() {
@@ -122,7 +126,7 @@
   }
 
   function draw() {
-    var width = 35;
+    var width = 45;
     var height = 23;
     var stepsDisplayLarge = kFormatter(stepsCounted);
     
