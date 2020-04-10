@@ -8,8 +8,8 @@
   var stepStart = false; //toggles each step to start or stop time
   var startTimeStep = 0; //set start time
   var stopTimeStep = 0; //Time after one step
-  var stepTimeDiff = 0; //Time difference between two steps
-  const cMaxTime = 1200; // Max step duration (ms)
+  var stepTimeDiff = 9999; //Time difference between two steps
+  const cMaxTime = 800; // Max step duration (ms)
   const cMinTime = 240; // Min step duration (ms)
   const cMaxDiff = 50; // Max difference between consecutive steps (%)
 
@@ -63,15 +63,29 @@
   function calcSteps() {
     if (debug == 1) print("Function calcStep"); //Debug info
 
+    //Calculate time between first and second step
     stepStart = !stepStart;
     if (stepStart == true) {
       startTimeStep = new Date(); //start time after step and step calculation
     }
     else {
       stopTimeStep = new Date(); //stop time for step duration calculation
-      stepTimeDiff = (stopTimeStep - startTimeStep) /1000; //time between steps in seconds
+      stepTimeDiff = stopTimeStep - startTimeStep; //time between steps in milliseconds
     }
 
+    //Remove step if time between first and second step is too long
+    if (stepTimeDiff >= cMaxTime) { //milliseconds
+      if (debug ==1 ) print ("------ Too long")
+      steps--;
+    }
+
+    //Remove step if time between first and second step is too short
+    if (stepTimeDiff <= cMinTime) { //milliseconds
+      if (debug ==1 ) print ("------ Too short")
+      steps--;
+    }
+
+    //Calculate step threshold
     if (steps >= stepThreshold) { //steps reached threshold
       stopTime = new Date(); //set end time
       diff = (stopTime.getTime() - startTime.getTime()) / 1000; //endtime - start time in seconds
