@@ -1,9 +1,17 @@
 (() => {
-  var stepThreshold = 20; //steps needed for threshold
-  var activeSeconds = 20; //in how many seconds dou you have to reach 10 steps so that they are counted
+  var stepThreshold = 10; //steps needed for threshold
+  var activeSeconds = 10; //in how many seconds dou you have to reach 10 steps so that they are counted
   var intervalResetActive = 30000; //interval for timer to reset active, in ms
   var stepGoal = 10000; //TODO: defne in settings
-  const stepSensitivity = 700; //set step sensitivity (80 is standard, 400 is muss les sensitive)
+  const stepSensitivity = 300; //set step sensitivity (80 is standard, 400 is much less sensitive)
+
+  var stepStart = false; //toggles each step to start or stop time
+  var startTimeStep = 0; //set start time
+  var stopTimeStep = 0; //Time after one step
+  var stepTimeDiff = 0; //Time difference between two steps
+  const cMaxTime = 1200; // Max step duration (ms)
+  const cMinTime = 240; // Min step duration (ms)
+  const cMaxDiff = 50; // Max difference between consecutive steps (%)
 
   var steps = 0; //steps taken
   var stepsCounted = 0; //active steps counted
@@ -31,6 +39,8 @@
     print ("Steps counted: " + stepsCounted);
     print ("Timediff " + diff);
     print ("Timediff resetActive: " + diffResetActive);
+    print ("Steptime diff: " + stepTimeDiff);
+    print ("StepStart: " + stepStart);
     print ("----");
   }
 
@@ -52,6 +62,16 @@
 
   function calcSteps() {
     if (debug == 1) print("Function calcStep"); //Debug info
+
+    stepStart = !stepStart;
+    if (stepStart == true) {
+      startTimeStep = new Date(); //start time after step and step calculation
+    }
+    else {
+      stopTimeStep = new Date(); //stop time for step duration calculation
+      stepTimeDiff = (stopTimeStep - startTimeStep) /1000; //time between steps in seconds
+    }
+
     if (steps >= stepThreshold) { //steps reached threshold
       stopTime = new Date(); //set end time
       diff = (stopTime.getTime() - startTime.getTime()) / 1000; //endtime - start time in seconds
