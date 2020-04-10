@@ -2,6 +2,7 @@
   var stepThreshold = 20; //steps needed for threshold
   var activeSeconds = 20; //in how many seconds dou you have to reach 10 steps so that they are counted
   var intervalResetActive = 30000; //interval for timer to reset active, in ms
+  var stepGoal = 10000; //TODO: defne in settings
 
   var steps = 0; //steps taken
   var stepsCounted = 0; //active steps counted
@@ -13,7 +14,6 @@
   var active = 0; //x steps in y seconds achieved
   var x = 0; //x position on screen
   var y = 40; //y position on screen
-  var stepGoal = 10000; //TODO: defne in settings
   var stepGoalPercent = 0; //percentage of step goal
   var stepGoalBarLength = 0; //length og progress bar
   var timerResetActive = 0; //timer to reset active
@@ -52,7 +52,7 @@
         if (debug == 1) print("--------Active condition met");
         active = 1; //set active
         clearInterval(timerResetActive); //stop timer which resets active
-        timerResetActive = setInterval(resetActive, intervalResetActive); //reset active after timer runs out
+        timerResetActive = setInterval(resetActive, intervalResetActive); //start timer which resets active after timer runs out
         
         stepsCounted += steps; //count steps
         steps = 0; //reset steps
