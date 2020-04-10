@@ -96,11 +96,11 @@
     
     //draw numbers
     if (active == 1) g.setColor(0x07E0); //green
-    else g.setColor(0xFFE0); //yellow
+    else g.setColor(0xFFFF); //white
     g.setFont("6x8", 2);
     g.drawString(stepsDisplayLarge,this.x+1,this.y);  //first line, big number
     g.setFont("6x8", 1);
-    g.setColor(0xFFFF);
+    g.setColor(0xFFFF); //white
     g.drawString(stepsCounted,this.x+1,this.y+14); //second line, small number
     
     //draw step goal bar
