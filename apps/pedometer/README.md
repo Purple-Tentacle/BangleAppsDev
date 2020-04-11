@@ -25,6 +25,7 @@ Pedometer that filters out arm movement and displays a step goal progress.
 
 ## Variables to change step mesaurement configuration
 
+* var debug = 1; //set to 0 to not display debug info in IDE console
 * var stepThreshold = 10; //steps needed for threshold
 * var activeSeconds = 10; //in how many seconds dou you have to reach 10 steps so that they are counted
 * var intervalResetActive = 30000; //interval for timer to reset active, in ms
