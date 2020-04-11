@@ -11,7 +11,6 @@
   var stepTimeDiff = 9999; //Time difference between two steps
   const cMaxTime = 800; // Max step duration (ms)
   const cMinTime = 240; // Min step duration (ms)
-  const cMaxDiff = 50; // Max difference between consecutive steps (%)
 
   var steps = 0; //steps taken
   var stepsCounted = 0; //active steps counted
