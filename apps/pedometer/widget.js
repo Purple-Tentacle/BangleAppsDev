@@ -25,6 +25,7 @@
   var stepGoalPercent = 0; //percentage of step goal
   var stepGoalBarLength = 0; //length og progress bar
   var timerResetActive = 0; //timer to reset active
+  var timerSaveFile = 0; //timer to regularly save information to file     
   const PEDOMFILE = "steps.json";
   var lastUpdate = new Date();
 
@@ -32,7 +33,7 @@
   var stepsTooLong = 0;
   var stepsOutsideTime = 0;
 
-  var debug = 1; //1=show debug information
+  var debug = 0; //1=show debug information
 
   //print debug info
   function printDebug() {
@@ -175,7 +176,9 @@
     let d = { //define array to write to file
       lastUpdate : lastUpdate.toISOString(),
       stepsToday : stepsCounted,
-      active : active
+      stepsTooShort : stepsTooShort,
+      stepsTooLong : stepsTooLong,
+      stepsOutsideTime : stepsOutsideTime
     };
     require("Storage").write(PEDOMFILE,d); //write array to file
   });
@@ -200,13 +203,12 @@
   if (pedomData) {
     if (pedomData.lastUpdate) lastUpdate = new Date(pedomData.lastUpdate);
     stepsCounted = pedomData.stepsToday|0;
-    active = pedomData.active;
     stepsTooShort = pedomData.stepsTooShort;
     stepsTooLong = pedomData.stepsTooLong;
     stepsOutsideTime = pedomData.stepsOutsideTime;
   }
 
-  setStepSensitivity(stepSensitivity) //set step sensitivity (80 is standard, 400 is muss les sensitive)
+  setStepSensitivity(stepSensitivity); //set step sensitivity (80 is standard, 400 is muss les sensitive)
 
   //Add widget
   WIDGETS["steps"]={area:"tl",width:40,draw:draw};
