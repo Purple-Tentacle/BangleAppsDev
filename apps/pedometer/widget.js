@@ -1,30 +1,22 @@
 (() => {
   var stepThreshold = 10; //steps needed for threshold
-  var activeSeconds = 10; //in how many seconds dou you have to reach 10 steps so that they are counted
-  //var intervalResetActive = 30000; //interval for timer to reset active, in ms
   var stepGoal = 10000; //TODO: defne in settings
   const stepSensitivity = 80; //set step sensitivity (80 is standard, 400 is much less sensitive)
 
-  var stepStart = false; //toggles each step to start or stop time
-  var startTimeStep = 0; //set start time
+  var intervalResetActive = 30000; //interval for timer to reset active, in ms
+  var timerResetActive = 0; //timer to reset active
+
+  var startTimeStep = new Date(); //set start time
   var stopTimeStep = 0; //Time after one step
   var stepTimeDiff = 9999; //Time difference between two steps
-  const cMaxTime = 800; // Max step duration (ms)
+  const cMaxTime = 900; // Max step duration (ms)
   const cMinTime = 240; // Min step duration (ms)
 
   var steps = 0; //steps taken
   var stepsCounted = 0; //active steps counted
-  var startTime = new Date();//set start time
-  var stopTime; //stop time
-  //var stopTimeResetActive; //stop time to check in resetActive function
-  var diff = 9999; //difference between start and end time
-  //var diffResetActive = 9999; //difference between start and stop in resetActive function
   var active = 0; //x steps in y seconds achieved
-  var x = 0; //x position on screen
-  var y = 40; //y position on screen
   var stepGoalPercent = 0; //percentage of step goal
-  var stepGoalBarLength = 0; //length og progress bar
-  //var timerResetActive = 0; //timer to reset active     
+  var stepGoalBarLength = 0; //length og progress bar   
   const PEDOMFILE = "steps.json";
   var lastUpdate = new Date();
 
@@ -32,18 +24,15 @@
   var stepsTooLong = 0;
   var stepsOutsideTime = 0;
 
-  var debug = 0; //1=show debug information
+  var debug = 1; //1=show debug information
 
   //print debug info
   function printDebug() {
-    print ("Settings:" + stepThreshold + "/" + activeSeconds + "/" + stepSensitivity);
+    print ("Settings:" + stepThreshold + "/" + intervalResetActive + "/" + stepSensitivity);
     print ("Active: " + active);
     print ("Steps: " + steps);
     print ("Steps counted: " + stepsCounted);
-    print ("Timediff " + diff);
-    //print ("Timediff resetActive: " + diffResetActive);
     print ("Steptime diff: " + stepTimeDiff);
-    print ("StepStart: " + stepStart);
     print ("TooShort: " + stepsTooShort);
     print ("TooLong: " + stepsTooLong);
     print ("OutSideTime: " + stepsOutsideTime);
@@ -70,72 +59,51 @@
     }
   }
 
-  function calcSteps() {
-    //if (debug == 1) print("Function calcStep"); //Debug info
+  //Set Active to 0
+  function resetActive() {
+    if (debug == 1) print("---------------Function resetActive");
+    active = 0;
+    steps = 0;
+    WIDGETS["steps"].draw();
+  }
 
-    //Calculate time between first and second step
-    if (stepStart == true) {
-      startTimeStep = new Date(); //start time after fist step
-    }
-    else {
-      stopTimeStep = new Date(); //stop time after second step
-      stepTimeDiff = stopTimeStep - startTimeStep; //time between steps in milliseconds
-    }
+  function calcSteps() {
+    stopTimeStep = new Date(); //stop time after each step
+    stepTimeDiff = stopTimeStep - startTimeStep; //time between steps in milliseconds
+    startTimeStep = new Date(); //start time again
 
     //Remove step if time between first and second step is too long
     if (stepTimeDiff >= cMaxTime) { //milliseconds
-      if (debug ==1 ) print ("------ Too long")
+      if (debug ==1 ) print ("------ Too long");
       stepsTooLong++; //count steps which are note counted, because time too long
       steps--;
     }
 
     //Remove step if time between first and second step is too short
     if (stepTimeDiff <= cMinTime) { //milliseconds
-      if (debug ==1 ) print ("------ Too short")
+      if (debug ==1 ) print ("------ Too short");
       stepsTooShort++; //count steps which are note counted, because time too short
       steps--;
     }
 
-    //Calculate step threshold
-    stopTime = new Date(); //set end time
-    if (steps >= stepThreshold) { //steps reached threshold
-      
-      diff = (stopTime.getTime() - startTime.getTime()) / 1000; //endtime - start time, in seconds
+    if (steps >= stepThreshold) {
+      if (active == 0) {
+        stepsCounted = stepsCounted + 9; //count steps needed to reach active status, last step is counted anyway, so not +10 but +9
+        stepsOutsideTime = stepsOutsideTime - 10; //substract steps needed to reac active status
+      }
+      active = 1;
+      clearInterval(timerResetActive); //stop timer which resets active
+      timerResetActive = setInterval(resetActive, intervalResetActive); //reset active after timer runs out
+      steps = 0;
+    }
 
-      if (diff >= activeSeconds) startTime = new Date(); //set new start time after activeSeconds have passed
-      if (diff <= activeSeconds) { //less than activeSeconds have passed
-        //if (debug == 1) print("-----Active condition met");
-        active = 1; //set active
-        //clearInterval(timerResetActive); //stop timer which resets active
-      }
-      else { //more than activeSeconds seconds have passed, start timer to reset active
-        //timerResetActive = setInterval(resetActive, intervalResetActive); //reset active after timer runs out
-        active = 0;
-      }
-
-      if (active == 1) {
-        stepsCounted += steps; //count steps
-        steps = 0; //reset steps
-      }
-      else {
-        stepsOutsideTime += steps; //count steps which are note counted, because threshold time too long
-        steps = 0; //do nout count steps, reset steps
-        startTime = new Date(); //set start time
-      }
+    if (active == 1) {
+      stepsCounted++; //count steps
+    }
+    else {
+      stepsOutsideTime++;
     }
   }
-
-  /*
-  //Set Active to 0
-  function resetActive() {
-    stopTimeResetActive = new Date(); //set end time
-    diffResetActive = (stopTimeResetActive.getTime() - startTime.getTime()) / 1000; //endtime - start time in seconds
-    //if (debug == 1) print("---------------Function resetActive");
-    if (diffResetActive > activeSeconds) active=0; //reset active, but only if step treshold timer has not run out
-    if (debug == 1) printDebug();
-    WIDGETS["steps"].draw();
-  }
-  */
 
   function draw() {
     var width = 45;
@@ -162,7 +130,8 @@
     g.drawString(stepsDisplayLarge,this.x+1,this.y);  //first line, big number
     g.setFont("6x8", 1);
     g.setColor(0xFFFF); //white
-    g.drawString(stepsCounted,this.x+1,this.y+14); //second line, small number
+    if (debug == 1) g.drawString("L-" + stepsTooLong + " S-" + stepsTooShort + " O-" + stepsOutsideTime,this.x+1,this.y+14); //second line, small number
+    else g.drawString(stepsCounted,this.x+1,this.y+14); //second line, small number
     
     //draw step goal bar
     stepGoalPercent = (stepsCounted / stepGoal) * 100;
@@ -190,9 +159,7 @@
 
   //When Step is registered by firmware
   Bangle.on('step', (up) => {
-    //let date = new Date();
     steps++; //increase step count
-    stepStart = !stepStart;
     calcSteps();
     if (debug == 1) printDebug();
     if (Bangle.isLCDOn()) WIDGETS["steps"].draw();
@@ -217,5 +184,21 @@
 
   //Add widget
   WIDGETS["steps"]={area:"tl",width:40,draw:draw};
+
+  setWatch(function() { //BTN3
+    if (debug == 1 ) {
+      steps = 0;
+      stepsCounted = 0;
+      stepsTooShort = 0;
+      stepsTooLong = 0;
+      stepsOutsideTime = 0;
+
+      startTimeStep = new Date();
+
+      print ("-------------------------");
+      printDebug();
+      WIDGETS["steps"]={area:"tl",width:40,draw:draw};
+    }
+  }, BTN3, {edge:"rising", debounce:50, repeat:true});
 
 })();
