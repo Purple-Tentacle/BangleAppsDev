@@ -33,6 +33,14 @@ Pedometer that filters out arm movement and displays a step goal progress.
 * const cMaxTime = 800; // Max step duration (ms)
 * const cMinTime = 240; // Min step duration (ms)
 
+## Installation
+
+* Open IDE https://www.espruino.com/ide/
+* Copy & paste the code to the right side of the IDE
+* Connect your watch
+* Chose to store to flash
+* Filename example: pedometer2.wid.js
+
 ## Requests
 
 If you have any feature requests, please post in this forum thread: http://forum.espruino.com/conversations/345754/
