@@ -1,7 +1,7 @@
 (() => {
   var stepThreshold = 10; //steps needed for threshold
   var activeSeconds = 10; //in how many seconds dou you have to reach 10 steps so that they are counted
-  var intervalResetActive = 30000; //interval for timer to reset active, in ms
+  //var intervalResetActive = 30000; //interval for timer to reset active, in ms
   var stepGoal = 10000; //TODO: defne in settings
   const stepSensitivity = 80; //set step sensitivity (80 is standard, 400 is much less sensitive)
 
@@ -16,16 +16,15 @@
   var stepsCounted = 0; //active steps counted
   var startTime = new Date();//set start time
   var stopTime; //stop time
-  var stopTimeResetActive; //stop time to check in resetActive function
+  //var stopTimeResetActive; //stop time to check in resetActive function
   var diff = 9999; //difference between start and end time
-  var diffResetActive = 9999; //difference between start and stop in resetActive function
+  //var diffResetActive = 9999; //difference between start and stop in resetActive function
   var active = 0; //x steps in y seconds achieved
   var x = 0; //x position on screen
   var y = 40; //y position on screen
   var stepGoalPercent = 0; //percentage of step goal
   var stepGoalBarLength = 0; //length og progress bar
-  var timerResetActive = 0; //timer to reset active
-  var timerSaveFile = 0; //timer to regularly save information to file     
+  //var timerResetActive = 0; //timer to reset active     
   const PEDOMFILE = "steps.json";
   var lastUpdate = new Date();
 
@@ -33,16 +32,16 @@
   var stepsTooLong = 0;
   var stepsOutsideTime = 0;
 
-  var debug = 1; //1=show debug information
+  var debug = 0; //1=show debug information
 
   //print debug info
   function printDebug() {
-    print ("Settings:" + stepThreshold + "/" + activeSeconds + "/" + intervalResetActive + "/" + stepSensitivity);
+    print ("Settings:" + stepThreshold + "/" + activeSeconds + "/" + stepSensitivity);
     print ("Active: " + active);
     print ("Steps: " + steps);
     print ("Steps counted: " + stepsCounted);
     print ("Timediff " + diff);
-    print ("Timediff resetActive: " + diffResetActive);
+    //print ("Timediff resetActive: " + diffResetActive);
     print ("Steptime diff: " + stepTimeDiff);
     print ("StepStart: " + stepStart);
     print ("TooShort: " + stepsTooShort);
@@ -107,10 +106,11 @@
       if (diff <= activeSeconds) { //less than activeSeconds have passed
         //if (debug == 1) print("-----Active condition met");
         active = 1; //set active
-        clearInterval(timerResetActive); //stop timer which resets active
+        //clearInterval(timerResetActive); //stop timer which resets active
       }
       else { //more than activeSeconds seconds have passed, start timer to reset active
-        timerResetActive = setInterval(resetActive, intervalResetActive); //reset active after timer runs out
+        //timerResetActive = setInterval(resetActive, intervalResetActive); //reset active after timer runs out
+        active = 0;
       }
 
       if (active == 1) {
@@ -125,6 +125,7 @@
     }
   }
 
+  /*
   //Set Active to 0
   function resetActive() {
     stopTimeResetActive = new Date(); //set end time
@@ -134,6 +135,7 @@
     if (debug == 1) printDebug();
     WIDGETS["steps"].draw();
   }
+  */
 
   function draw() {
     var width = 45;
@@ -192,7 +194,7 @@
     steps++; //increase step count
     stepStart = !stepStart;
     calcSteps();
-    if (debug ==1) printDebug();
+    if (debug == 1) printDebug();
     if (Bangle.isLCDOn()) WIDGETS["steps"].draw();
   });
 
