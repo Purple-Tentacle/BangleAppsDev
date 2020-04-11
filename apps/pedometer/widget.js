@@ -33,7 +33,7 @@
   var stepsTooLong = 0;
   var stepsOutsideTime = 0;
 
-  var debug = 0; //1=show debug information
+  var debug = 1; //1=show debug information
 
   //print debug info
   function printDebug() {
@@ -45,6 +45,9 @@
     print ("Timediff resetActive: " + diffResetActive);
     print ("Steptime diff: " + stepTimeDiff);
     print ("StepStart: " + stepStart);
+    print ("TooShort: " + stepsTooShort);
+    print ("TooLong: " + stepsTooLong);
+    print ("OutSideTime: " + stepsOutsideTime);
     print ("----");
   }
 
@@ -69,7 +72,7 @@
   }
 
   function calcSteps() {
-    if (debug == 1) print("Function calcStep"); //Debug info
+    //if (debug == 1) print("Function calcStep"); //Debug info
 
     //Calculate time between first and second step
     if (stepStart == true) {
@@ -102,7 +105,7 @@
 
       if (diff >= activeSeconds) startTime = new Date(); //set new start time after activeSeconds have passed
       if (diff <= activeSeconds) { //less than activeSeconds have passed
-        if (debug == 1) print("-----Active condition met");
+        //if (debug == 1) print("-----Active condition met");
         active = 1; //set active
         clearInterval(timerResetActive); //stop timer which resets active
       }
@@ -126,7 +129,7 @@
   function resetActive() {
     stopTimeResetActive = new Date(); //set end time
     diffResetActive = (stopTimeResetActive.getTime() - startTime.getTime()) / 1000; //endtime - start time in seconds
-    if (debug == 1) print("---------------Function resetActive");
+    //if (debug == 1) print("---------------Function resetActive");
     if (diffResetActive > activeSeconds) active=0; //reset active, but only if step treshold timer has not run out
     if (debug == 1) printDebug();
     WIDGETS["steps"].draw();
