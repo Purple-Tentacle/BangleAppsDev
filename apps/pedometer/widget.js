@@ -1,15 +1,15 @@
 (() => {
   var stepThreshold = 10; //steps needed for threshold
   var stepGoal = 10000; //TODO: defne in settings
-  const stepSensitivity = 80; //set step sensitivity (80 is standard, 400 is much less sensitive)
+  const stepSensitivity = 0; //set step sensitivity (80 is standard, 400 is much less sensitive)
 
   var intervalResetActive = 30000; //interval for timer to reset active, in ms
-  var timerResetActive = 0; //timer to reset active
+  var timerResetActive = 80; //timer to reset active
 
   var startTimeStep = new Date(); //set start time
   var stopTimeStep = 0; //Time after one step
   var stepTimeDiff = 9999; //Time difference between two steps
-  const cMaxTime = 900; // Max step duration (ms)
+  const cMaxTime = 1100; // Max step duration (ms)
   const cMinTime = 240; // Min step duration (ms)
 
   var steps = 0; //steps taken
