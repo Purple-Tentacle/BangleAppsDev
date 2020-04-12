@@ -3,7 +3,7 @@ Pedometer that filters out arm movement and displays a step goal progress.
 
 I changed the step counting algorithm completely.
 Now every step is counted when in status 'active', if the time difference between two steps is not too short or too long.
-To get in 'active' mode, you have to reach the step threshold before the active timner runs out.
+To get in 'active' mode, you have to reach the step threshold before the active timer runs out.
 When you reach the step threshold, the steps needed to reach the threshold are counted as well.
 
 ## Screenshots
