@@ -1,7 +1,7 @@
 (() => {
-  var stepThreshold = 10; //steps needed for threshold
+  var stepThreshold = 30; //steps needed for threshold
   var stepGoal = 10000; //TODO: defne in settings
-  const stepSensitivity = 0; //set step sensitivity (80 is standard, 400 is much less sensitive)
+  const stepSensitivity = 80; //set step sensitivity (80 is standard, 400 is much less sensitive)
 
   var intervalResetActive = 30000; //interval for timer to reset active, in ms
   var timerResetActive = 80; //timer to reset active
@@ -24,7 +24,7 @@
   var stepsTooLong = 0;
   var stepsOutsideTime = 0;
 
-  var debug = 1; //1=show debug information
+  var debug = 0; //1=show debug information
 
   //print debug info
   function printDebug() {
@@ -186,7 +186,7 @@
   WIDGETS["steps"]={area:"tl",width:40,draw:draw};
 
   setWatch(function() { //BTN3
-    if (debug == 1 ) {
+    //if (debug == 1 ) {
       steps = 0;
       stepsCounted = 0;
       stepsTooShort = 0;
@@ -198,7 +198,7 @@
       print ("-------------------------");
       printDebug();
       WIDGETS["steps"]={area:"tl",width:40,draw:draw};
-    }
+    //}
   }, BTN3, {edge:"rising", debounce:50, repeat:true});
 
 })();
