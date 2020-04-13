@@ -1,17 +1,17 @@
 (() => {
+  /* Moved to settings file
   var stepThreshold = 30; //steps needed for threshold
   var stepGoal = 10000; //TODO: defne in settings
   const stepSensitivity = 80; //set step sensitivity (80 is standard, 400 is much less sensitive)
-
   var intervalResetActive = 30000; //interval for timer to reset active, in ms
-  var timerResetActive = 80; //timer to reset active
-
-  var startTimeStep = new Date(); //set start time
-  var stopTimeStep = 0; //Time after one step
-  var stepTimeDiff = 9999; //Time difference between two steps
   const cMaxTime = 1100; // Max step duration (ms)
   const cMinTime = 240; // Min step duration (ms)
+  */
 
+  var stepTimeDiff = 9999; //Time difference between two steps
+  var startTimeStep = new Date(); //set start time
+  var stopTimeStep = 0; //Time after one step
+  var timerResetActive = 0; //timer to reset active
   var steps = 0; //steps taken
   var stepsCounted = 0; //active steps counted
   var active = 0; //x steps in y seconds achieved
@@ -23,20 +23,24 @@
   var stepsTooLong = 0;
   var stepsOutsideTime = 0;
 
+  //define default settings
   const DEFAULTS = {
-    'maxtime' : 1100,
-    'mintime' : 240,
-    'resetactive' : 80,
-    'sensitivity' : 80,
-    'stepgoal' : 10000,
+    'cMaxTime' : 1100,
+    'cMinTime' : 240,
+    'stepThreshold' : 30,
+    'intervalResetActive' : 30000,
+    'stepSensitivity' : 80,
+    'stepGoal' : 10000,
   }
   const SETTINGS_FILE = 'activepedom.settings.json'
   const PEDOMFILE = "activepedom.steps.json";
   
   let settings
+    //load settings
   function loadSettings() {
     settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {}
   }
+  //return setting
   function setting(key) {
     if (!settings) { loadSettings() }
     return (key in settings) ? settings[key] : DEFAULTS[key]
@@ -46,7 +50,7 @@
 
   //print debug info
   function printDebug() {
-    print ("Settings:" + stepThreshold + "/" + intervalResetActive + "/" + stepSensitivity);
+    print ("Settings:" + setting('stepThreshold') + "/" + setting('intervalResetActive' + "/" + setting('stepSensitivity'));
     print ("Active: " + active);
     print ("Steps: " + steps);
     print ("Steps counted: " + stepsCounted);
@@ -91,27 +95,27 @@
     startTimeStep = new Date(); //start time again
 
     //Remove step if time between first and second step is too long
-    if (stepTimeDiff >= cMaxTime) { //milliseconds
+    if (stepTimeDiff >= setting('cMaxTime')) { //milliseconds
       if (debug ==1 ) print ("------ Too long");
       stepsTooLong++; //count steps which are note counted, because time too long
       steps--;
     }
 
     //Remove step if time between first and second step is too short
-    if (stepTimeDiff <= cMinTime) { //milliseconds
+    if (stepTimeDiff <= setting('cMinTime')) { //milliseconds
       if (debug ==1 ) print ("------ Too short");
       stepsTooShort++; //count steps which are note counted, because time too short
       steps--;
     }
 
-    if (steps >= stepThreshold) {
+    if (steps >= setting('stepThreshold')) {
       if (active == 0) {
         stepsCounted = stepsCounted + 9; //count steps needed to reach active status, last step is counted anyway, so not +10 but +9
         stepsOutsideTime = stepsOutsideTime - 10; //substract steps needed to reac active status
       }
       active = 1;
       clearInterval(timerResetActive); //stop timer which resets active
-      timerResetActive = setInterval(resetActive, intervalResetActive); //reset active after timer runs out
+      timerResetActive = setInterval(resetActive, setting('intervalResetActive')); //reset active after timer runs out
       steps = 0;
     }
 
@@ -152,7 +156,7 @@
     else g.drawString(stepsCounted,this.x+1,this.y+14); //second line, small number
     
     //draw step goal bar
-    stepGoalPercent = (stepsCounted / stepGoal) * 100;
+    stepGoalPercent = (stepsCounted / setting('stepGoal')) * 100;
     stepGoalBarLength = width / 100 * stepGoalPercent;
     if (stepGoalBarLength > width) stepGoalBarLength = width; //do not draw across width of widget
     g.setColor(0x7BEF);
@@ -198,7 +202,7 @@
     stepsOutsideTime = pedomData.stepsOutsideTime;
   }
 
-  setStepSensitivity(stepSensitivity); //set step sensitivity (80 is standard, 400 is muss les sensitive)
+  setStepSensitivity(setting('stepSensitivity')); //set step sensitivity (80 is standard, 400 is muss les sensitive)
 
   //Add widget
   WIDGETS["steps"]={area:"tl",width:40,draw:draw};
