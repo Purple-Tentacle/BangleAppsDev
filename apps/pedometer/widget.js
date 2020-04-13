@@ -9,6 +9,7 @@
   var stepGoalPercent = 0; //percentage of step goal
   var stepGoalBarLength = 0; //length og progress bar   
   var lastUpdate = new Date();
+  var width = 45;
 
   var stepsTooShort = 0;
   var stepsTooLong = 0;
@@ -61,7 +62,7 @@
   function resetActive() {
     active = 0;
     steps = 0;
-    WIDGETS["activepedom"].draw();
+    if (Bangle.isLCDOn()) WIDGETS["activepedom"].draw();
   }
 
   function calcSteps() {
@@ -101,8 +102,7 @@
   }
 
   function draw() {
-    var width = 45;
-    var height = 23;
+    var height = 23; //width is deined globally
     var stepsDisplayLarge = kFormatter(stepsCounted);
     
     //Check if same day
@@ -130,9 +130,9 @@
     stepGoalPercent = (stepsCounted / setting('stepGoal')) * 100;
     stepGoalBarLength = width / 100 * stepGoalPercent;
     if (stepGoalBarLength > width) stepGoalBarLength = width; //do not draw across width of widget
-    g.setColor(0x7BEF);
-    g.fillRect(this.x, this.y+height, this.x+width, this.y+height); // draw bar
-    g.setColor(0xFFFF);
+    g.setColor(0x7BEF); //grey
+    g.fillRect(this.x, this.y+height, this.x+width, this.y+height); // draw background bar
+    g.setColor(0xFFFF); //white
     g.fillRect(this.x, this.y+height, this.x+1, this.y+height-1); //draw start of bar
     g.fillRect(this.x+width, this.y+height, this.x+width-1, this.y+height-1); //draw end of bar
     g.fillRect(this.x, this.y+height, this.x+stepGoalBarLength, this.y+height); // draw progress bar
@@ -154,7 +154,6 @@
   Bangle.on('step', (up) => {
     steps++; //increase step count
     calcSteps();
-    if (debug == 1) printDebug();
     if (Bangle.isLCDOn()) WIDGETS["activepedom"].draw();
   });
 
@@ -173,9 +172,9 @@
     stepsOutsideTime = pedomData.stepsOutsideTime;
   }
 
-  setStepSensitivity(setting('stepSensitivity')); //set step sensitivity (80 is standard, 400 is muss les sensitive)
+  setStepSensitivity(setting('stepSensitivity')); //set step sensitivity (80 is standard, 400 is muss less sensitive)
 
   //Add widget
-  WIDGETS["activepedom"]={area:"tl",width:40,draw:draw};
+  WIDGETS["activepedom"]={area:"tl",width:width,draw:draw};
 
 })();
