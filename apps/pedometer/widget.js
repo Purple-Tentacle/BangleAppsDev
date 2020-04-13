@@ -1,13 +1,4 @@
 (() => {
-  /* Moved to settings file
-  var stepThreshold = 30; //steps needed for threshold
-  var stepGoal = 10000; //TODO: defne in settings
-  const stepSensitivity = 80; //set step sensitivity (80 is standard, 400 is much less sensitive)
-  var intervalResetActive = 30000; //interval for timer to reset active, in ms
-  const cMaxTime = 1100; // Max step duration (ms)
-  const cMinTime = 240; // Min step duration (ms)
-  */
-
   var stepTimeDiff = 9999; //Time difference between two steps
   var startTimeStep = new Date(); //set start time
   var stopTimeStep = 0; //Time after one step
@@ -46,21 +37,6 @@
     return (key in settings) ? settings[key] : DEFAULTS[key];
   }
 
-  var debug = 0; //1=show debug information
-
-  //print debug info
-  function printDebug() {
-    print ("Settings:" + setting('stepThreshold') + "/" + setting('intervalResetActive') + "/" + setting('stepSensitivity'));
-    print ("Active: " + active);
-    print ("Steps: " + steps);
-    print ("Steps counted: " + stepsCounted);
-    print ("Steptime diff: " + stepTimeDiff);
-    print ("TooShort: " + stepsTooShort);
-    print ("TooLong: " + stepsTooLong);
-    print ("OutSideTime: " + stepsOutsideTime);
-    print ("----");
-  }
-
   function setStepSensitivity(s) {
     function sqr(x) { return x*x; }
     var X=sqr(8192-s);
@@ -83,7 +59,6 @@
 
   //Set Active to 0
   function resetActive() {
-    if (debug == 1) print("---------------Function resetActive");
     active = 0;
     steps = 0;
     WIDGETS["activepedom"].draw();
@@ -96,14 +71,12 @@
 
     //Remove step if time between first and second step is too long
     if (stepTimeDiff >= setting('cMaxTime')) { //milliseconds
-      if (debug ==1 ) print ("------ Too long");
       stepsTooLong++; //count steps which are note counted, because time too long
       steps--;
     }
 
     //Remove step if time between first and second step is too short
     if (stepTimeDiff <= setting('cMinTime')) { //milliseconds
-      if (debug ==1 ) print ("------ Too short");
       stepsTooShort++; //count steps which are note counted, because time too short
       steps--;
     }
@@ -143,7 +116,6 @@
     
     g.reset();
     g.clearRect(this.x, this.y, this.x+width, this.y+height);
-    //if (debug == 1) g.drawRect(this.x,this.y,this.x+width,this.y+height); //draw rectangle around widget area
     
     //draw numbers
     if (active == 1) g.setColor(0x07E0); //green
@@ -152,8 +124,7 @@
     g.drawString(stepsDisplayLarge,this.x+1,this.y);  //first line, big number
     g.setFont("6x8", 1);
     g.setColor(0xFFFF); //white
-    if (debug == 1) g.drawString("L-" + stepsTooLong + " S-" + stepsTooShort + " O-" + stepsOutsideTime,this.x+1,this.y+14); //second line, small number
-    else g.drawString(stepsCounted,this.x+1,this.y+14); //second line, small number
+    g.drawString(stepsCounted,this.x+1,this.y+14); //second line, small number
     
     //draw step goal bar
     stepGoalPercent = (stepsCounted / setting('stepGoal')) * 100;
@@ -206,21 +177,5 @@
 
   //Add widget
   WIDGETS["activepedom"]={area:"tl",width:40,draw:draw};
-
-  setWatch(function() { //BTN3
-    //if (debug == 1 ) {
-      steps = 0;
-      stepsCounted = 0;
-      stepsTooShort = 0;
-      stepsTooLong = 0;
-      stepsOutsideTime = 0;
-
-      startTimeStep = new Date();
-
-      print ("-------------------------");
-      printDebug();
-      WIDGETS["activepedom"]={area:"tl",width:40,draw:draw};
-    //}
-  }, BTN3, {edge:"rising", debounce:50, repeat:true});
 
 })();
