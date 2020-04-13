@@ -31,26 +31,26 @@
     'intervalResetActive' : 30000,
     'stepSensitivity' : 80,
     'stepGoal' : 10000,
-  }
-  const SETTINGS_FILE = 'activepedom.settings.json'
+  };
+  const SETTINGS_FILE = 'activepedom.settings.json';
   const PEDOMFILE = "activepedom.steps.json";
   
-  let settings
+  let settings;
     //load settings
   function loadSettings() {
-    settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {}
+    settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {};
   }
   //return setting
   function setting(key) {
-    if (!settings) { loadSettings() }
-    return (key in settings) ? settings[key] : DEFAULTS[key]
+    if (!settings) { loadSettings(); }
+    return (key in settings) ? settings[key] : DEFAULTS[key];
   }
 
   var debug = 0; //1=show debug information
 
   //print debug info
   function printDebug() {
-    print ("Settings:" + setting('stepThreshold') + "/" + setting('intervalResetActive' + "/" + setting('stepSensitivity'));
+    print ("Settings:" + setting('stepThreshold') + "/" + setting('intervalResetActive') + "/" + setting('stepSensitivity'));
     print ("Active: " + active);
     print ("Steps: " + steps);
     print ("Steps counted: " + stepsCounted);
