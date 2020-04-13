@@ -17,12 +17,30 @@
   var active = 0; //x steps in y seconds achieved
   var stepGoalPercent = 0; //percentage of step goal
   var stepGoalBarLength = 0; //length og progress bar   
-  const PEDOMFILE = "steps.json";
   var lastUpdate = new Date();
 
   var stepsTooShort = 0;
   var stepsTooLong = 0;
   var stepsOutsideTime = 0;
+
+  const DEFAULTS = {
+    'maxtime' : 1100,
+    'mintime' : 240,
+    'resetactive' : 80,
+    'sensitivity' : 80,
+    'stepgoal' : 10000,
+  }
+  const SETTINGS_FILE = 'activepedom.settings.json'
+  const PEDOMFILE = "activepedom.steps.json";
+  
+  let settings
+  function loadSettings() {
+    settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {}
+  }
+  function setting(key) {
+    if (!settings) { loadSettings() }
+    return (key in settings) ? settings[key] : DEFAULTS[key]
+  }
 
   var debug = 0; //1=show debug information
 
