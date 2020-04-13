@@ -86,7 +86,7 @@
     if (debug == 1) print("---------------Function resetActive");
     active = 0;
     steps = 0;
-    WIDGETS["steps"].draw();
+    WIDGETS["activepedom"].draw();
   }
 
   function calcSteps() {
@@ -184,12 +184,12 @@
     steps++; //increase step count
     calcSteps();
     if (debug == 1) printDebug();
-    if (Bangle.isLCDOn()) WIDGETS["steps"].draw();
+    if (Bangle.isLCDOn()) WIDGETS["activepedom"].draw();
   });
 
   // redraw when the LCD turns on
   Bangle.on('lcdPower', function(on) {
-    if (on) WIDGETS["steps"].draw();
+    if (on) WIDGETS["activepedom"].draw();
   });
 
   //Read data from file and set variables
@@ -205,7 +205,7 @@
   setStepSensitivity(setting('stepSensitivity')); //set step sensitivity (80 is standard, 400 is muss les sensitive)
 
   //Add widget
-  WIDGETS["steps"]={area:"tl",width:40,draw:draw};
+  WIDGETS["activepedom"]={area:"tl",width:40,draw:draw};
 
   setWatch(function() { //BTN3
     //if (debug == 1 ) {
@@ -219,7 +219,7 @@
 
       print ("-------------------------");
       printDebug();
-      WIDGETS["steps"]={area:"tl",width:40,draw:draw};
+      WIDGETS["activepedom"]={area:"tl",width:40,draw:draw};
     //}
   }, BTN3, {edge:"rising", debounce:50, repeat:true});
 
