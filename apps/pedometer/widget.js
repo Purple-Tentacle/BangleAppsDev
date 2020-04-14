@@ -18,16 +18,6 @@
 
   var distance = 0; //distance travelled
 
-  //define default settings
-  const DEFAULTS = {
-    'cMaxTime' : 1100,
-    'cMinTime' : 240,
-    'stepThreshold' : 30,
-    'intervalResetActive' : 30000,
-    'stepSensitivity' : 80,
-    'stepGoal' : 10000,
-    'stepLength' : 75,
-  };
   const SETTINGS_FILE = 'activepedom.settings.json';
   const PEDOMFILE = "activepedom.steps.json";
   
@@ -36,10 +26,21 @@
   function loadSettings() {
     settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {};
   }
+
   //return setting
   function setting(key) {
-    if (!settings) { loadSettings(); }
-    return (key in settings) ? settings[key] : DEFAULTS[key];
+    //define default settings
+    const DEFAULTS = {
+      'cMaxTime' : 1100,
+      'cMinTime' : 240,
+      'stepThreshold' : 30,
+      'intervalResetActive' : 30000,
+      'stepSensitivity' : 80,
+      'stepGoal' : 10000,
+      'stepLength' : 75,
+    };
+  if (!settings) { loadSettings(); }
+  return (key in settings) ? settings[key] : DEFAULTS[key];
   }
 
   function setStepSensitivity(s) {
@@ -103,6 +104,7 @@
     else {
       stepsOutsideTime++;
     }
+    settings = 0; //reset settings to save memory
   }
 
   function draw() {
@@ -152,6 +154,8 @@
     g.fillRect(this.x, this.y+height, this.x+1, this.y+height-1); //draw start of bar
     g.fillRect(this.x+width, this.y+height, this.x+width-1, this.y+height-1); //draw end of bar
     g.fillRect(this.x, this.y+height, this.x+stepGoalBarLength, this.y+height); // draw progress bar
+
+    settings = 0; //reset settings to save memory
   }
 
   //This event is called just before the device shuts down for commands such as reset(), load(), save(), E.reboot() or Bangle.off()
@@ -180,6 +184,7 @@
 
   //Read data from file and set variables
   let pedomData = require("Storage").readJSON(PEDOMFILE,1);
+  
   if (pedomData) {
     if (pedomData.lastUpdate) lastUpdate = new Date(pedomData.lastUpdate);
     stepsCounted = pedomData.stepsToday|0;
@@ -187,6 +192,8 @@
     stepsTooLong = pedomData.stepsTooLong;
     stepsOutsideTime = pedomData.stepsOutsideTime;
   }
+
+  pedomdata = 0; //reset pedomdata to save memory
 
   setStepSensitivity(setting('stepSensitivity')); //set step sensitivity (80 is standard, 400 is muss less sensitive)
 
