@@ -1,4 +1,4 @@
-# Improved pedometer
+# Active Pedometer
 Pedometer that filters out arm movement and displays a step goal progress.
 
 I changed the step counting algorithm completely.
