@@ -16,6 +16,7 @@ function resetSettings() {
     minutes : 0,
     seconds : 0,
     started : false,
+    counter : 0,
   };
   updateSettings();
 }

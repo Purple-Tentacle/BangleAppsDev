@@ -11,18 +11,22 @@
         seconds = 0,
         ms = 0;
 
+    /*
     function printDebug() {
         print ("Time: " + time);
         print ("Counter: " + counter);
         print ("Started: " + settings.started);
         print ("----");
     }
+    */
 
     function countDown() {
-        printDebug();
+        //printDebug();
         if (counter > 0) {
             if (settings.started) {
                 counter = counter - 1000;
+                settings.counter = counter;
+                storage.write('chronowid.json', settings);
                 time = msToTime(counter);
                 reload();
             }
@@ -54,10 +58,15 @@
     }
 
     function calcCounter() {
-        hours = settings.hours;
-        minutes =settings.minutes;
-        seconds = settings.seconds;
-        ms = (hours * 60 * 60 * 1000) + (minutes * 60 * 1000) + (seconds * 1000);
+        if (settings.counter == 0) {
+            hours = settings.hours;
+            minutes =settings.minutes;
+            seconds = settings.seconds;
+            ms = (hours * 60 * 60 * 1000) + (minutes * 60 * 1000) + (seconds * 1000);
+        }
+        else  {
+            ms = settings.counter;
+        }
         return ms;
     }
 
@@ -85,6 +94,7 @@
     counter = calcCounter();
     time = msToTime(counter);
 
+    
     if (settings.started) interval = setInterval(countDown, 1000);
 
     // add the widget
