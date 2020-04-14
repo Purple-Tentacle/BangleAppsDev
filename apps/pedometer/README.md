@@ -29,9 +29,20 @@ When you reach the step threshold, the steps needed to reach the threshold are c
 * Steps are saved to a file and read-in at start (to not lose step progress)
 * Settings can be changed in Settings - App/widget settings - Active Pedometer
 
-## Development version
+## Settings
 
-* https://github.com/Purple-Tentacle/BangleAppsDev/tree/master/apps/pedometer
+* Max time (ms): Maximum time between two steps in milliseconds, steps will not be counted if exceeded. Standard: 1100
+* Min time (ms): Minimum time between two steps in milliseconds, steps will not be counted if fallen below. Standard: 240
+* Step threshold: How many steps are needed to reach 'active' mode. If you do not reach the threshold in the 'Active Reset' time, the steps are not counted. Standard: 30
+* Act.Res. (ms): Active Reset. After how many miliseconds will the 'active mode' reset. You have to reach the step threshold in this time, otherwise the steps are not counted. Standard: 30000
+* Step sens.: Step Sensitivity. How sensitive should the sted detection be? This changes sensitivity in step detection in the firmware. Standard in firmware: 80
+* Step goal: This is your daily step goal. Standard: 10000
+
+## Releases
+
+* Offifical app loader: https://github.com/espruino/BangleApps/tree/master/apps/activepedom (https://banglejs.com/apps)
+* Forked app loader: https://github.com/Purple-Tentacle/BangleApps/tree/master/apps/activepedom (https://purple-tentacle.github.io/BangleApps/#widget)
+* Development: https://github.com/Purple-Tentacle/BangleAppsDev/tree/master/apps/pedometer
 
 ## Requests
 
