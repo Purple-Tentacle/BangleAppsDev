@@ -8,12 +8,15 @@
   var active = 0; //x steps in y seconds achieved
   var stepGoalPercent = 0; //percentage of step goal
   var stepGoalBarLength = 0; //length og progress bar   
-  var lastUpdate = new Date();
-  var width = 45;
+  var lastUpdate = new Date(); //used to reset counted steps on new day
+  var width = 45; //width of widget
 
-  var stepsTooShort = 0;
+  //used for statistics and debugging
+  var stepsTooShort = 0; 
   var stepsTooLong = 0;
   var stepsOutsideTime = 0;
+
+  var distance = 0; //distance travelled
 
   //define default settings
   const DEFAULTS = {
@@ -23,6 +26,7 @@
     'intervalResetActive' : 30000,
     'stepSensitivity' : 80,
     'stepGoal' : 10000,
+    'stepLength' : 75,
   };
   const SETTINGS_FILE = 'activepedom.settings.json';
   const PEDOMFILE = "activepedom.steps.json";
@@ -46,7 +50,7 @@
   }
 
   //format number to make them shorter
-  function kFormatter(num) {
+  function kFormatterSteps(num) {
     if (num <= 999) return num; //smaller 1.000, return 600 as 600
     if (num >= 1000 && num < 10000) { //between 1.000 and 10.000
       num = Math.floor(num/100)*100;
@@ -103,7 +107,8 @@
 
   function draw() {
     var height = 23; //width is deined globally
-    var stepsDisplayLarge = kFormatter(stepsCounted);
+    var stepsDisplayLarge = kFormatterSteps(stepsCounted);
+    distance = (stepsCounted * setting('stepLength')) / 100 /1000 //distance in km
     
     //Check if same day
     let date = new Date();
@@ -121,10 +126,21 @@
     if (active == 1) g.setColor(0x07E0); //green
     else g.setColor(0xFFFF); //white
     g.setFont("6x8", 2);
-    g.drawString(stepsDisplayLarge,this.x+1,this.y);  //first line, big number
+
+    if (setting('lineOne') == 'Steps') {
+      g.drawString(stepsDisplayLarge,this.x+1,this.y);  //first line, big number, steps
+    }
+    if (setting('lineOne') == 'Distance') {
+      g.drawString(distance.toFixed(2),this.x+1,this.y);  //first line, big number, distance
+    }
     g.setFont("6x8", 1);
     g.setColor(0xFFFF); //white
-    g.drawString(stepsCounted,this.x+1,this.y+14); //second line, small number
+    if (setting('lineTwo') == 'Steps') {
+      g.drawString(stepsCounted,this.x+1,this.y+14); //second line, small number, steps
+    }
+    if (setting('lineTwo') == 'Distance') {
+      g.drawString(distance.toFixed(3) + "km",this.x+1,this.y+14); //second line, small number, distance
+    }
     
     //draw step goal bar
     stepGoalPercent = (stepsCounted / setting('stepGoal')) * 100;

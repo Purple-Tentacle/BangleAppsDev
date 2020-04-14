@@ -19,8 +19,9 @@ When you reach the step threshold, the steps needed to reach the threshold are c
 ## Features
 
 * Two line display
+* Can display distance (in km) or steps in each line
 * Large number for good readability
-* Small number with the exact steps counted
+* Small number with the exact steps counted or more exact distance
 * Large number is displayed in green when status is 'active'
 * Progress bar for step goal
 * Counts steps only if they are reached in a certain time
@@ -37,6 +38,9 @@ When you reach the step threshold, the steps needed to reach the threshold are c
 * Act.Res. (ms): Active Reset. After how many miliseconds will the 'active mode' reset. You have to reach the step threshold in this time, otherwise the steps are not counted. Standard: 30000
 * Step sens.: Step Sensitivity. How sensitive should the sted detection be? This changes sensitivity in step detection in the firmware. Standard in firmware: 80
 * Step goal: This is your daily step goal. Standard: 10000
+* Step length: Kength of one step in cm. Standard: 75
+* Line One: What to display in line one, steps or distance. Standard: steps
+* Line Two: What to display in line two, steps or distance. Standard: distance
 
 ## Releases
 
