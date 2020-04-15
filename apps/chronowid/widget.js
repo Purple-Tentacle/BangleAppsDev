@@ -2,9 +2,9 @@
     var settings = {};
     var height = 23;
     var width = 40;
-    var counter = 0;
+    var counter = 0; //the actual timer
     const storage = require('Storage');
-    var interval =  0;
+    var interval =  0; //used for the 1 second interval timer
 
     var hours = 0,
         minutes = 0,
@@ -20,30 +20,32 @@
     }
     */
 
+    //counts down, calculates and displays
     function countDown() {
         //printDebug();
-        if (counter > 0) {
-            if (settings.started) {
-                counter = counter - 1000;
-                settings.counter = counter;
-                storage.write('chronowid.json', settings);
+        if (counter > 0) { //time is not up
+            if (settings.started) { //check if timer is on
+                counter = counter - 1000; //substrct 1 second, because tinmer runs every second
+                settings.counter = counter; 
+                storage.write('chronowid.json', settings); //write timer progress to file
                 time = msToTime(counter);
                 reload();
             }
-        } else {
-            if (settings.started) {
+        } else { //time is up
+            if (settings.started) { //check if timer is on
                 Bangle.buzz(1500);
                 time = msToTime(counter);
-                clearInterval(interval);
+                clearInterval(interval); //stop timer, otherwiese this else poirtion will be called every second
                 interval = 0;
 
                 settings.started = false;
-                storage.write('chronowid.json', settings);
+                storage.write('chronowid.json', settings); //write started to file
                 reload();
             }
         }
     }
 
+    //takes ms and converts to time display (00:00:00)
     function msToTime(duration) {
         var milliseconds = parseInt((duration % 1000) / 100),
             seconds = Math.floor((duration / 1000) % 60),
@@ -57,6 +59,7 @@
         return hours + ":" + minutes + ":" + seconds;
     }
 
+    //take values from settings file and convert to ms
     function calcCounter() {
         if (settings.counter == 0) {
             hours = settings.hours;
@@ -72,7 +75,7 @@
 
     // draw your widget
     function draw() {
-        if (!settings.started) return;
+        if (!settings.started) return; //do not draw anything if timer is not started
         g.reset();
         g.clearRect(this.x,this.y,this.x+width,this.y+height);
         g.drawString(time, this.x+1, this.y+(height/2));
@@ -85,17 +88,16 @@
             width = 40;
         } 
         else {
-            width = 0;
+            width = 0; //if timer is not started
         }
         WIDGETS["chronowid"].draw();
     }
 
-    settings = storage.readJSON("chronowid.json",1)||{};
-    counter = calcCounter();
-    time = msToTime(counter);
+    settings = storage.readJSON("chronowid.json",1)||{}; //read settings from file
+    counter = calcCounter(); //calulate ms from setting values
+    time = msToTime(counter); //calculate time from ms
 
-    
-    if (settings.started) interval = setInterval(countDown, 1000);
+    if (settings.started) interval = setInterval(countDown, 1000); //start countdown each second
 
     // add the widget
     WIDGETS["chronowid"]={area:"tl",width:width,draw:draw,reload:function() {
