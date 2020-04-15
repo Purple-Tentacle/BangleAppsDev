@@ -109,7 +109,6 @@
 
   function draw() {
     var height = 23; //width is deined globally
-    var stepsDisplayLarge = kFormatterSteps(stepsCounted);
     distance = (stepsCounted * setting('stepLength')) / 100 /1000 //distance in km
     
     //Check if same day
@@ -130,7 +129,7 @@
     g.setFont("6x8", 2);
 
     if (setting('lineOne') == 'Steps') {
-      g.drawString(stepsDisplayLarge,this.x+1,this.y);  //first line, big number, steps
+      g.drawString(kFormatterSteps(stepsCounted),this.x+1,this.y);  //first line, big number, steps
     }
     if (setting('lineOne') == 'Distance') {
       g.drawString(distance.toFixed(2),this.x+1,this.y);  //first line, big number, distance
