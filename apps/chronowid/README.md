@@ -11,8 +11,8 @@ TBD
 
 ## Features
 
-* Use your watch when timer is active
-* Saves the passed time periodically, so ven if the widget gets unloaded, you can take off where you left. Please note that the timer pauses when the widget is not loaded!
+* Using other apps does not interrupt the timer, no need to keep the widget open (BUT: there will be no buzz when the time is up, for that the widget has to be loaded)
+* Target time is saved to a file and timer picks up again when widget is loaded again.
 
 ## Settings
 
