@@ -5,6 +5,7 @@
     var counter = 0; //the actual timer
     const storage = require('Storage');
     var interval =  0; //used for the 1 second interval timer
+    var delay = 0; //used to delay storage of timer to file
 
     var hours = 0,
         minutes = 0,
@@ -23,11 +24,15 @@
     //counts down, calculates and displays
     function countDown() {
         //printDebug();
+        delay++;
         if (counter > 0) { //time is not up
             if (settings.started) { //check if timer is on
                 counter = counter - 1000; //substrct 1 second, because tinmer runs every second
                 settings.counter = counter; 
-                storage.write('chronowid.json', settings); //write timer progress to file
+                if (delay >= 30) { //Only write to file every 30 seconds
+                    storage.write('chronowid.json', settings); //write timer progress to file
+                    delay = 0;
+                }
                 time = msToTime(counter);
                 reload();
             }
