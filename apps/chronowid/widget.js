@@ -69,7 +69,7 @@
     if (settingsChronowid.started) interval = setInterval(countDown, 1000); //start countdown each second
 
     // add the widget
-    WIDGETS["chronowid"]={area:"tl",width:width,draw:draw,reload:function() {
+    WIDGETS["chronowid"]={area:"bl",width:width,draw:draw,reload:function() {
         reload();
         Bangle.drawWidgets(); // relayout all widgets
     }};
