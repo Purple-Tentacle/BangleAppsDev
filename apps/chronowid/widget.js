@@ -2,7 +2,7 @@
     const storage = require('Storage');
     settingsChronowid = storage.readJSON("chronowid.json",1)||{}; //read settingsChronowid from file
     var height = 23;
-    var width = 40;
+    var width = 58;
     var interval =  0; //used for the 1 second interval timer
     var now = new Date();
 
@@ -36,35 +36,49 @@
 
     //counts down, calculates and displays
     function countDown() {
-        printDebug();
+        //printDebug();
         now = new Date();
         diff = settingsChronowid.goal - now; //calculate difference
         WIDGETS["chronowid"].draw();
         //time is up
         if (settingsChronowid.started && diff <= 0) {
             Bangle.buzz(1500);
-            print ("Time is up");
             //write timer off to file
             settingsChronowid.started = false;
             storage.writeJSON('chronowid.json', settingsChronowid);
             clearInterval(interval); //stop interval
-            printDebug();
+            //printDebug();
         }
     }
 
     // draw your widget
     function draw() {
-        if (!settingsChronowid.started) return; //do not draw anything if timer is not started
+        if (!settingsChronowid.started) {
+            width = 0;
+            return; //do not draw anything if timer is not started
+        }
         g.reset();
-        g.clearRect(this.x,this.y,this.x+width,this.y+height);
-        if (diff >= 0) g.drawString(getTime(diff), this.x+1, this.y+(height/2));
-        else g.drawString("END", this.x+1, this.y+(height/2));
+        if (diff >= 0) {
+            if (diff < 600000) { //less than 1 hour left
+                width = 58;
+                g.clearRect(this.x,this.y,this.x+width,this.y+height);
+                g.setFont("6x8", 2);
+                g.drawString(getTime(diff).substring(3), this.x+1, this.y+5); //remove hour part 00:00:00 -> 00:00
+            }
+            if (diff >= 600000) { //one hour or more left
+                width = 48;
+                g.clearRect(this.x,this.y,this.x+width,this.y+height);
+                g.setFont("6x8", 1);
+                g.drawString(getTime(diff), this.x+1, this.y+((height/2)-4)); //display hour 00:00:00
+            }
+        }
+        else {
+            width = 58;
+            g.clearRect(this.x,this.y,this.x+width,this.y+height);
+            g.setFont("6x8", 2);
+            g.drawString("END", this.x+15, this.y+5);
+        }
     }
-
-    //This event is called just before the device shuts down for commands such as reset(), load(), save(), E.reboot() or Bangle.off()
-    E.on('kill', () => {
-        print("-KILL-");
-    });
 
     if (settingsChronowid.started) interval = setInterval(countDown, 1000); //start countdown each second
 
@@ -74,6 +88,6 @@
         Bangle.drawWidgets(); // relayout all widgets
     }};
 
-    printDebug();
+    //printDebug();
     countDown();
 })();
