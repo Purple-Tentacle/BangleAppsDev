@@ -3,6 +3,7 @@
   var startTimeStep = new Date(); //set start time
   var stopTimeStep = 0; //Time after one step
   var timerResetActive = 0; //timer to reset active
+  var timerStoreData = 0; //timer to store data
   var steps = 0; //steps taken
   var stepsCounted = 0; //active steps counted
   var active = 0; //x steps in y seconds achieved
@@ -20,11 +21,27 @@
 
   const SETTINGS_FILE = 'activepedom.settings.json';
   const PEDOMFILE = "activepedom.steps.json";
+  var dataFile;
+  var storeDataInterval = 5*60*1000; //ms
   
   let settings;
     //load settings
   function loadSettings() {
     settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {};
+  }
+
+  function storeData()  {
+    now = new Date();
+    dataFile = require("Storage").open("activepedom.data.json","a");
+    if (dataFile) dataFile.write([
+      now.getTime(),
+      stepsCounted,
+      active,
+      stepsTooShort,
+      stepsTooLong,
+      stepsOutsideTime,
+    ].join(",")+"\n");
+    dataFile = undefined;
   }
 
   //return setting
@@ -109,7 +126,7 @@
 
   function draw() {
     var height = 23; //width is deined globally
-    distance = (stepsCounted * setting('stepLength')) / 100 /1000 //distance in km
+    distance = (stepsCounted * setting('stepLength')) / 100 /1000; //distance in km
     
     //Check if same day
     let date = new Date();
@@ -195,6 +212,8 @@
   pedomdata = 0; //reset pedomdata to save memory
 
   setStepSensitivity(setting('stepSensitivity')); //set step sensitivity (80 is standard, 400 is muss less sensitive)
+
+  timerStoreData = setInterval(storeData, storeDataInterval); //store data regularly
 
   //Add widget
   WIDGETS["activepedom"]={area:"tl",width:width,draw:draw};

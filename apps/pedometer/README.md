@@ -30,6 +30,16 @@ When you reach the step threshold, the steps needed to reach the threshold are c
 * Steps are saved to a file and read-in at start (to not lose step progress)
 * Settings can be changed in Settings - App/widget settings - Active Pedometer
 
+## Data storage
+
+* Data is stored to a file
+* Format: now,stepsCounted,active,stepsTooShort,stepsTooLong,stepsOutsideTime
+* now is UNIX timestamp
+* YOu can import the file into Excel
+* The file does not include a header
+* You can convert UNIX timestamp to a date in Excel using this formula: =DATE(1970;1;1)+(LINKS(A2;10)/86400)
+* You have to format the cell with the formula to a date cell. Example: YYYY-MM-DD-hh-mm-ss
+
 ## Settings
 
 * Max time (ms): Maximum time between two steps in milliseconds, steps will not be counted if exceeded. Standard: 1100
