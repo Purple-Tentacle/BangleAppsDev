@@ -32,4 +32,4 @@ There are no settings section in the settings app, timer can be set using an app
 
 ## Requests
 
-If you have any feature requests, please contact me on the Espruino forum: http://forum.espruino.com/profiles/155005/
+If you have any feature requests, please write here: http://forum.espruino.com/conversations/345972/
