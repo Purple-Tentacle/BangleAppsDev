@@ -216,6 +216,6 @@
   timerStoreData = setInterval(storeData, storeDataInterval); //store data regularly
 
   //Add widget
-  WIDGETS["activepedom"]={area:"bl",width:width,draw:draw};
+  WIDGETS["activepedom"]={area:"tl",width:width,draw:draw};
 
 })();
