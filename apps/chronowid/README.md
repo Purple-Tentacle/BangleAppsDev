@@ -20,15 +20,16 @@ TBD
 
 There are no settings section in the settings app, timer can be set using an app.
 
+* Reset values: Reset hours, minutes, seconds to 0; set timer on to false; write to settings file
 * Hours: Set the hours for the timer
 * Minutes: Set the minutes for the timer
 * Seconds: Set the seconds for the timer
-* Timer on: Starts the timer and displays the widget when set to 'On'. You have to leave the app. The widget is always there, but only visible when timer is on. 
+* Timer on: Starts the timer and displays the widget when set to 'On'. You have to leave the app to load the widget which starts the timer. The widget is always there, but only visible when timer is on. 
 
 
 ## Releases
 
-* Offifical app loader: Not yet published.
+* Offifical app loader: https://github.com/espruino/BangleApps/tree/master/apps/chronowid (https://banglejs.com/apps/)
 * Forked app loader: https://github.com/Purple-Tentacle/BangleApps/tree/master/apps/chronowid (https://purple-tentacle.github.io/BangleApps/index.html#)
 * Development: https://github.com/Purple-Tentacle/BangleAppsDev/tree/master/apps/chronowid
 
