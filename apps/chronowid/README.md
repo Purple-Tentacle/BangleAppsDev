@@ -5,6 +5,8 @@ The advantage is, that you can still see your normal watchface and other widgets
 The widget is always active, but only shown when the timer is on.
 Hours, minutes, seconds and timer status can be set with an app.
 
+Depending on when you start the timer, it may alert up to 0,999 seconds early. This is because it checks only for full seconds. When there is less than one seconds left, it buzzes. This cannot be avoided without checking more than every second, which I would like to avoid.
+
 ## Screenshots
 
 TBD
