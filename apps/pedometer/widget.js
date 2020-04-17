@@ -10,7 +10,7 @@
   var stepGoalPercent = 0; //percentage of step goal
   var stepGoalBarLength = 0; //length og progress bar   
   var lastUpdate = new Date(); //used to reset counted steps on new day
-  var width = 45; //width of widget
+  var width = 46; //width of widget
 
   //used for statistics and debugging
   var stepsTooShort = 0; 
