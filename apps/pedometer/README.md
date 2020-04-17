@@ -1,4 +1,4 @@
-# Active Pedometer
+﻿# Active Pedometer
 Pedometer that filters out arm movement and displays a step goal progress.
 
 I changed the step counting algorithm completely.
@@ -37,8 +37,8 @@ When you reach the step threshold, the steps needed to reach the threshold are c
 * now is UNIX timestamp
 * YOu can import the file into Excel
 * The file does not include a header
-* You can convert UNIX timestamp to a date in Excel using this formula: =DATE(1970;1;1)+(LINKS(A2;10)/86400)
-* You have to format the cell with the formula to a date cell. Example: YYYY-MM-DD-hh-mm-ss
+* You can convert UNIX timestamp to a date in Excel using this formula: =DATUM(1970;1;1)+(LINKS(A2;10)/86400)
+* You have to format the cell with the formula to a date cell. Example: JJJJ-MM-TT-hh-mm-ss
 
 ## Settings
 
