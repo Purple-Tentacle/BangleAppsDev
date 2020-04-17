@@ -94,20 +94,20 @@
 
     //Remove step if time between first and second step is too long
     if (stepTimeDiff >= setting('cMaxTime')) { //milliseconds
-      stepsTooLong++; //count steps which are note counted, because time too long
+      stepsTooLong++; //count steps which are not counted, because time too long
       steps--;
     }
-
     //Remove step if time between first and second step is too short
     if (stepTimeDiff <= setting('cMinTime')) { //milliseconds
-      stepsTooShort++; //count steps which are note counted, because time too short
+      stepsTooShort++; //count steps which are not counted, because time too short
       steps--;
     }
 
+    //Step threshold reached
     if (steps >= setting('stepThreshold')) {
       if (active == 0) {
         stepsCounted = stepsCounted + (setting('stepThreshold') -1) ; //count steps needed to reach active status, last step is counted anyway, so treshold -1
-        stepsOutsideTime = stepsOutsideTime - 10; //substract steps needed to reac active status
+        stepsOutsideTime = stepsOutsideTime - 10; //substract steps needed to reach active status
       }
       active = 1;
       clearInterval(timerResetActive); //stop timer which resets active
@@ -132,8 +132,11 @@
     let date = new Date();
     if (lastUpdate.getDate() == date.getDate()){ //if same day
     }
-    else {
-      stepsCounted = 1; //set stepcount to 1
+    else { //different day, set all steps to 0
+      stepsCounted = 0;
+      stepsTooShort = 0; 
+      stepsTooLong = 0;
+      stepsOutsideTime = 0;
     }
     lastUpdate = date;
     
@@ -200,7 +203,6 @@
 
   //Read data from file and set variables
   let pedomData = require("Storage").readJSON(PEDOMFILE,1);
-  
   if (pedomData) {
     if (pedomData.lastUpdate) lastUpdate = new Date(pedomData.lastUpdate);
     stepsCounted = pedomData.stepsToday|0;
@@ -208,14 +210,10 @@
     stepsTooLong = pedomData.stepsTooLong;
     stepsOutsideTime = pedomData.stepsOutsideTime;
   }
-
   pedomdata = 0; //reset pedomdata to save memory
 
   setStepSensitivity(setting('stepSensitivity')); //set step sensitivity (80 is standard, 400 is muss less sensitive)
-
   timerStoreData = setInterval(storeData, storeDataInterval); //store data regularly
-
   //Add widget
   WIDGETS["activepedom"]={area:"tl",width:width,draw:draw};
-
 })();
