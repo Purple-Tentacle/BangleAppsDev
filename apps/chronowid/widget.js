@@ -47,7 +47,7 @@
             storage.writeJSON('chronowid.json', settingsChronowid);
             clearInterval(interval); //stop interval
         }
-        printDebug();
+        //printDebug();
     }
 
     // draw your widget
