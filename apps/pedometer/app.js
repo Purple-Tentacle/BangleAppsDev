@@ -1,70 +1,71 @@
 (() => {
 
 const storage = require("Storage");
-var csvFile = storage.open("activepedom.data.json", "r");
-const history = 28800000; // 28800000=8h 43200000=12h //86400000=24h
-var times = [];
-var steps = [];
-var actives = [];
-var shorts = [];
-var longs = [];
-var outsides = [];
+const history = 86400000; // 28800000=8h 43200000=12h //86400000=24h
 
 //Convert ms to time
 function getTime(t)  {
-    var milliseconds = parseInt((t % 1000) / 100),
+    date = new Date(t);
+    offset = date.getTimezoneOffset() / 60;
+    //var milliseconds = parseInt((t % 1000) / 100),
     seconds = Math.floor((t / 1000) % 60),
     minutes = Math.floor((t / (1000 * 60)) % 60),
     hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+    hours = hours - offset;
     hours = (hours < 10) ? "0" + hours : hours;
     minutes = (minutes < 10) ? "0" + minutes : minutes;
     seconds = (seconds < 10) ? "0" + seconds : seconds;
     return hours + ":" + minutes + ":" + seconds;
 }
 
-//Get JSON from CSV
-function getArrayFromCSV(file, index) {
+function getDate(t) {
+    date = new Date(t*1);
+    year = date.getFullYear();
+    month = date.getMonth()+1; //month is zero-based
+    day = date.getDate();
+    month = (month < 10) ? "0" + month : month;
+    day = (day < 10) ? "0" + day : day;
+    return year + "-" + month + "-" + day;
+}
+
+function getArrayFromCSV(file, column) {
     i = 0;
     array = [];
     now = new Date();
     while ((nextLine = file.readLine())) { //as long as there is a next line
         if(nextLine) {
             dataSplitted = nextLine.split(','); //split line, 0= time, 1=stepsCounted, 2=active, 3=stepsTooShort, 4=stepsTooLong, 5=stepsOutsideTime
-
             diff = now - dataSplitted[0]; //calculate difference between now and stored time
             if (diff <= history) { //only entries from the last x ms
-                switch(index) {
-                    case 0:
-                        array.push(dataSplitted[0]);
-                        break;
-                    case 1:
-                        array.push(dataSplitted[1]);
-                        break;
-                    case 2:
-                        array.push(dataSplitted[2]);
-                        break;
-                    case 3:
-                        array.push(dataSplitted[3]);
-                        break;
-                    case 4:
-                        array.push(dataSplitted[4]);
-                        break;
-                    case 5:
-                        dataSplitted[5].slice(0,-1);
-                        break;
-                }
+                array.push(dataSplitted[column]);
             }
         }
         i++;
     }
     return array;
 }
+var csvFile = storage.open("activepedom.data.json", "r");
 times = getArrayFromCSV(csvFile, 0);
-steps = getArrayFromCSV(csvFile, 0);
-actives = getArrayFromCSV(csvFile, 0);
-shorts = getArrayFromCSV(csvFile, 0);
-longs = getArrayFromCSV(csvFile, 0);
-outsides = getArrayFromCSV(csvFile, 0);
+start = getDate(times[0]) + " " + getTime(times[0]);
+stop =  getDate (times[times.length-1]) + " " + getTime(times[times.length-1]);
+
+var csvFile = storage.open("activepedom.data.json", "r");
+steps = getArrayFromCSV(csvFile, 1);
+// actives = getArrayFromCSV(csvFile, 2);
+// shorts = getArrayFromCSV(csvFile, 3);
+// longs = getArrayFromCSV(csvFile, 4);
+// outsides = getArrayFromCSV(csvFile, 5); //array.push(dataSplitted[5].slice(0,-1));
+
+g.clear();
+require("graph").drawBar(g, steps, {
+    title: "Steps Counted",
+    axes : true,
+    gridy : 1000,
+    y : 50,
+});
+
+g.drawString("Start: " + start, 20, 10);
+g.drawString(" Stop: " + stop, 20, 20); 
 
 //free memory from big variables
 allData = undefined;
