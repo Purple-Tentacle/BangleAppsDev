@@ -1,18 +1,14 @@
-const storage = require("Storage");
-const graph = require("graph");
-var dataFile = storage.open("activepedom.data.json", "r");
+(() => {
 
-// initialize with default settings...
-var data = {
-    'entries' : [{
-        'time' : 0,
-        'stepsCounted' : 0,
-        'active' : 0,
-        'stepsTooShort' : 0,
-        'stepsTooLong' : 0,
-        'stepsOutsideTime' : 0,
-    }]
-};
+const storage = require("Storage");
+var csvFile = storage.open("activepedom.data.json", "r");
+const history = 28800000; // 28800000=8h 43200000=12h //86400000=24h
+var times = [];
+var steps = [];
+var actives = [];
+var shorts = [];
+var longs = [];
+var outsides = [];
 
 //Convert ms to time
 function getTime(t)  {
@@ -20,82 +16,60 @@ function getTime(t)  {
     seconds = Math.floor((t / 1000) % 60),
     minutes = Math.floor((t / (1000 * 60)) % 60),
     hours = Math.floor((t / (1000 * 60 * 60)) % 24);
-
     hours = (hours < 10) ? "0" + hours : hours;
     minutes = (minutes < 10) ? "0" + minutes : minutes;
     seconds = (seconds < 10) ? "0" + seconds : seconds;
-    
     return hours + ":" + minutes + ":" + seconds;
 }
 
-function getData(file) {
-    lines = [];
+//Get JSON from CSV
+function getArrayFromCSV(file, index) {
     i = 0;
-    while ((nextLine = file.readLine())) {
+    array = [];
+    now = new Date();
+    while ((nextLine = file.readLine())) { //as long as there is a next line
         if(nextLine) {
-            lines.push(nextLine);
-            dataSplitted = nextLine.split(',');
+            dataSplitted = nextLine.split(','); //split line, 0= time, 1=stepsCounted, 2=active, 3=stepsTooShort, 4=stepsTooLong, 5=stepsOutsideTime
 
-            data.entries.push({
-                "time" : dataSplitted[0], 
-                "stepsCounted" : dataSplitted[1],
-                "active" : dataSplitted[2],
-                "stepsTooShort" : dataSplitted[3],
-                "stepsTooLong" : dataSplitted[4],
-                "stepsOutsideTime" : dataSplitted[5]
-            });
+            diff = now - dataSplitted[0]; //calculate difference between now and stored time
+            if (diff <= history) { //only entries from the last x ms
+                switch(index) {
+                    case 0:
+                        array.push(dataSplitted[0]);
+                        break;
+                    case 1:
+                        array.push(dataSplitted[1]);
+                        break;
+                    case 2:
+                        array.push(dataSplitted[2]);
+                        break;
+                    case 3:
+                        array.push(dataSplitted[3]);
+                        break;
+                    case 4:
+                        array.push(dataSplitted[4]);
+                        break;
+                    case 5:
+                        dataSplitted[5].slice(0,-1);
+                        break;
+                }
+            }
         }
         i++;
     }
-    return data;
+    return array;
 }
-data = getData(dataFile);
+times = getArrayFromCSV(csvFile, 0);
+steps = getArrayFromCSV(csvFile, 0);
+actives = getArrayFromCSV(csvFile, 0);
+shorts = getArrayFromCSV(csvFile, 0);
+longs = getArrayFromCSV(csvFile, 0);
+outsides = getArrayFromCSV(csvFile, 0);
 
-print(data.entries[1]);
+//free memory from big variables
+allData = undefined;
+allDataFile = undefined;
+csvFile = undefined;
+times = undefined;
 
-data = undefined;
-dataFile = undefined;
-
-// now = new Date();
-// data.time.forEach(function(entry) {
-//     diff = now - entry;
-//     print (entry + " " + getTime(diff));
-//     print(getTime(entry));
-// });
-
-
-// g.clear();
-// g.setColor(0x07E0); //green
-// graph.drawLine(g,data.stepsCounted, {
-//     axes: true,
-//     gridy : 1000,
-// });
-
-// g.setColor(0xFFFF); //white
-// graph.drawLine(g,data.stepsOutsideTime, {
-//     axes: true,
-//     gridy : 1000,
-// });
-
-
-  
-  //Get all entries for a given date
-  //Currently unused
-  function getCSVContent(date,arrCSV){
-    var dd = String(date.getDate());
-    if(dd<10)dd='0'+dd;
-    var mm = String(date.getMonth() + 1);
-    if(mm<10)mm='0'+mm;
-    var yyyy = date.getFullYear();
-    dateStr = (yyyy + "-" + mm + "-" + dd);
-  
-    //Go through lines and get pressure for date given at call of function
-    var arrPressureData = [];
-    for (var line=0; line<arrCSV.length; line++) {
-        if (arrCSV[line][0] == dateStr){
-          arrPressureData.push(arrCSV[line][2]);
-          //print ("pressure at " + arrCSV[line][1] + ": " + arrCSV[line][2]);
-      }
-    }
-    return (arrPressureData);
-  }
+})();
