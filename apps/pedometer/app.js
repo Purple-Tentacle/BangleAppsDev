@@ -81,6 +81,7 @@ function drawGraph(mode) {
     if (stepsLastEntry > 10000) gridyValue = 5000;
 
     //draw
+    drawMenu();
     g.drawString("First: " + first, 40, 30);
     g.drawString(" Last: " + last, 40, 40);
     require("graph").drawLine(g, steps, {
@@ -97,8 +98,9 @@ function drawGraph(mode) {
     times = undefined;
 }
 
-function drawText () {
+function drawMenu () {
     g.clear();
+    g.setFont("6x8", 1);
     g.drawString("BTN1:Mode | BTN2:Draw | BTN3:Span ", 20, 10);
     if (mode == "day") g.drawString("Mode: " + mode, 20, 20);
     if (mode == "history") g.drawString("Mode: " + mode + " | Timespan: " + history/1000/60/60 + " hours", 20, 20);
@@ -107,10 +109,12 @@ function drawText () {
 setWatch(function() { //BTN1
     if (mode == "day") mode = "history";
         else mode = "day";
-    drawText();
+    drawMenu();
 }, BTN1, {edge:"rising", debounce:50, repeat:true});
 
 setWatch(function() { //BTN2
+    g.setFont("6x8", 2);
+    g.drawString ("Drawing...",30,60);
     //modes: history=show entries from last ms defined in history, day=show entries from current day
     drawGraph(mode);
 }, BTN2, {edge:"rising", debounce:50, repeat:true});
@@ -124,6 +128,6 @@ setWatch(function() { //BTN4
 setWatch(function() { //BTN5
 }, BTN5, {edge:"rising", debounce:50, repeat:true});
 
-drawText();
+drawMenu();
 
 })();
