@@ -56,41 +56,50 @@ function getArrayFromCSV(file, column, mode) {
     return array;
 }
 
-var csvFile = storage.open("activepedom.data.json", "r");
-times = getArrayFromCSV(csvFile, 0, "day");
-start = getDate(times[0]) + " " + getTime(times[0]);
-stop =  getDate (times[times.length-1]) + " " + getTime(times[times.length-1]);
+function drawGraph(mode) {
+    //times
+    // actives = getArrayFromCSV(csvFile, 2);
+    // shorts = getArrayFromCSV(csvFile, 3);
+    // longs = getArrayFromCSV(csvFile, 4);
+    // outsides = getArrayFromCSV(csvFile, 5); //array.push(dataSplitted[5].slice(0,-1));
+    var csvFile = storage.open("activepedom.data.json", "r");
+    times = getArrayFromCSV(csvFile, 0, "day");
+    first = getDate(times[0]) + " " + getTime(times[0]);
+    last =  getDate (times[times.length-1]) + " " + getTime(times[times.length-1]);
+    //free memory
+    csvFile = undefined;
+    times = undefined;
 
-var csvFile = storage.open("activepedom.data.json", "r");
-steps = getArrayFromCSV(csvFile, 1, "day");
-//define y-axis grid labels
-stepsLastEntry = steps[steps.length-1];
-if (stepsLastEntry < 1000) gridyValue = 100;
-if (stepsLastEntry >= 1000 && stepsLastEntry < 10000) gridyValue = 500;
-if (stepsLastEntry > 10000) gridyValue = 5000;
+    //steps
+    var csvFile = storage.open("activepedom.data.json", "r");
+    steps = getArrayFromCSV(csvFile, 1, "day");
+    //define y-axis grid labels
+    stepsLastEntry = steps[steps.length-1];
+    if (stepsLastEntry < 1000) gridyValue = 100;
+    if (stepsLastEntry >= 1000 && stepsLastEntry < 10000) gridyValue = 500;
+    if (stepsLastEntry > 10000) gridyValue = 5000;
 
-// actives = getArrayFromCSV(csvFile, 2);
-// shorts = getArrayFromCSV(csvFile, 3);
-// longs = getArrayFromCSV(csvFile, 4);
-// outsides = getArrayFromCSV(csvFile, 5); //array.push(dataSplitted[5].slice(0,-1));
+    //draw
+    g.clear();
+    if (mode == "Day") g.drawString(" Showing current day", 40, 0);
+    if (mode == "history") g.drawString(" Showing last " + history/1000/60/60 + " hours", 40, 0);
+    g.drawString("First: " + first, 40, 10);
+    g.drawString(" Last: " + last, 40, 20);
+    require("graph").drawLine(g, steps, {
+        title: "Steps Counted",
+        axes : true,
+        gridy : gridyValue,
+        y : 50, //offset on screen
+        x : 5, //offset on screen
+    });
+    //free memory from big variables
+    allData = undefined;
+    allDataFile = undefined;
+    csvFile = undefined;
+    times = undefined;
+}
 
-//draw graph
-g.clear();
-require("graph").drawLine(g, steps, {
-    title: "Steps Counted",
-    axes : true,
-    gridy : gridyValue,
-    y : 50, //offset on screen
-    x : 5, //offset on screen
-});
-
-g.drawString("Start: " + start, 30, 10);
-g.drawString(" Stop: " + stop, 30, 20); 
-
-//free memory from big variables
-allData = undefined;
-allDataFile = undefined;
-csvFile = undefined;
-times = undefined;
+//modes: history=show entries from last ms defined in history, day=show entries from current day
+drawGraph("history");
 
 })();
