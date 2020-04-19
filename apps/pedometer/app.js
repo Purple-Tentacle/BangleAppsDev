@@ -2,6 +2,7 @@
 
 const storage = require("Storage");
 var history = 43200000; // 28800000=8h 43200000=12h //86400000=24h
+var mode = "day";
 
 //Convert ms to time
 function getTime(t)  {
@@ -63,7 +64,7 @@ function drawGraph(mode) {
     // longs = getArrayFromCSV(csvFile, 4);
     // outsides = getArrayFromCSV(csvFile, 5); //array.push(dataSplitted[5].slice(0,-1));
     var csvFile = storage.open("activepedom.data.json", "r");
-    times = getArrayFromCSV(csvFile, 0, "day");
+    times = getArrayFromCSV(csvFile, 0, mode);
     first = getDate(times[0]) + " " + getTime(times[0]);
     last =  getDate (times[times.length-1]) + " " + getTime(times[times.length-1]);
     //free memory
@@ -72,7 +73,7 @@ function drawGraph(mode) {
 
     //steps
     var csvFile = storage.open("activepedom.data.json", "r");
-    steps = getArrayFromCSV(csvFile, 1, "day");
+    steps = getArrayFromCSV(csvFile, 1, mode);
     //define y-axis grid labels
     stepsLastEntry = steps[steps.length-1];
     if (stepsLastEntry < 1000) gridyValue = 100;
@@ -80,13 +81,10 @@ function drawGraph(mode) {
     if (stepsLastEntry > 10000) gridyValue = 5000;
 
     //draw
-    g.clear();
-    if (mode == "Day") g.drawString(" Showing current day", 40, 0);
-    if (mode == "history") g.drawString(" Showing last " + history/1000/60/60 + " hours", 40, 0);
-    g.drawString("First: " + first, 40, 10);
-    g.drawString(" Last: " + last, 40, 20);
+    g.drawString("First: " + first, 40, 30);
+    g.drawString(" Last: " + last, 40, 40);
     require("graph").drawLine(g, steps, {
-        title: "Steps Counted",
+        //title: "Steps Counted",
         axes : true,
         gridy : gridyValue,
         y : 50, //offset on screen
@@ -99,7 +97,33 @@ function drawGraph(mode) {
     times = undefined;
 }
 
-//modes: history=show entries from last ms defined in history, day=show entries from current day
-drawGraph("history");
+function drawText () {
+    g.clear();
+    g.drawString("BTN1:Mode | BTN2:Draw | BTN3:Span ", 20, 10);
+    if (mode == "day") g.drawString("Mode: " + mode, 20, 20);
+    if (mode == "history") g.drawString("Mode: " + mode + " | Timespan: " + history/1000/60/60 + " hours", 20, 20);
+}
+
+setWatch(function() { //BTN1
+    if (mode == "day") mode = "history";
+        else mode = "day";
+    drawText();
+}, BTN1, {edge:"rising", debounce:50, repeat:true});
+
+setWatch(function() { //BTN2
+    //modes: history=show entries from last ms defined in history, day=show entries from current day
+    drawGraph(mode);
+}, BTN2, {edge:"rising", debounce:50, repeat:true});
+
+setWatch(function() { //BTN3
+}, BTN3, {edge:"rising", debounce:50, repeat:true});
+
+setWatch(function() { //BTN4
+}, BTN4, {edge:"rising", debounce:50, repeat:true});
+
+setWatch(function() { //BTN5
+}, BTN5, {edge:"rising", debounce:50, repeat:true});
+
+drawText();
 
 })();
