@@ -1,7 +1,6 @@
 (() => {
 
 const storage = require("Storage");
-mode = "history";
 var history = 43200000; // 28800000=8h 43200000=12h //86400000=24h
 
 //Convert ms to time
@@ -29,34 +28,27 @@ function getDate(t) {
     return year + "-" + month + "-" + day;
 }
 
-function getArrayFromCSV(file, column) {
+//modes: history=show entries from last ms defined in history, day=show entries from current day
+//columns: 0=time, 1=stepsCounted, 2=active, 3=stepsTooShort, 4=stepsTooLong, 5=stepsOutsideTime
+function getArrayFromCSV(file, column, mode) { 
     i = 0;
     array = [];
     now = new Date();
     while ((nextLine = file.readLine())) { //as long as there is a next line
         if(nextLine) {
-            dataSplitted = nextLine.split(','); //split line, 0= time, 1=stepsCounted, 2=active, 3=stepsTooShort, 4=stepsTooLong, 5=stepsOutsideTime
-            diff = now - dataSplitted[0]; //calculate difference between now and stored time
-            if (diff <= history) { //only entries from the last x ms
-                    array.push(dataSplitted[column]);
-            }
-        }
-        i++;
-    }
-    return array;
-}
+            dataSplitted = nextLine.split(','); //split line, 
 
-function getArrayFromCSV2(file, column) {
-    i = 0;
-    array = [];
-    now = new Date();
-    now.setDate(now.getDate() - 1);
-    while ((nextLine = file.readLine())) { //as long as there is a next line
-        if(nextLine) {
-            dataSplitted = nextLine.split(','); //split line, 0= time, 1=stepsCounted, 2=active, 3=stepsTooShort, 4=stepsTooLong, 5=stepsOutsideTime
-            date = new Date(dataSplitted[0]*1);
-            if (now.getDate() == date.getDate()) { //same day
-                    array.push(dataSplitted[column]);
+            if (mode == "history") {
+                diff = now - dataSplitted[0]; //calculate difference between now and stored time
+                if (diff <= history) { //only entries from the last x ms
+                        array.push(dataSplitted[column]);
+                }
+            }
+            if (mode == "day") {
+                date = new Date(dataSplitted[0]*1);
+                if (now.getDate() == date.getDate()) { //same day
+                        array.push(dataSplitted[column]);
+                }
             }
         }
         i++;
@@ -65,28 +57,35 @@ function getArrayFromCSV2(file, column) {
 }
 
 var csvFile = storage.open("activepedom.data.json", "r");
-times = getArrayFromCSV2(csvFile, 0);
+times = getArrayFromCSV(csvFile, 0, "day");
 start = getDate(times[0]) + " " + getTime(times[0]);
 stop =  getDate (times[times.length-1]) + " " + getTime(times[times.length-1]);
 
 var csvFile = storage.open("activepedom.data.json", "r");
-steps = getArrayFromCSV2(csvFile, 1);
-print(steps);
+steps = getArrayFromCSV(csvFile, 1, "day");
+//define y-axis grid labels
+stepsLastEntry = steps[steps.length-1];
+if (stepsLastEntry < 1000) gridyValue = 100;
+if (stepsLastEntry >= 1000 && stepsLastEntry < 10000) gridyValue = 500;
+if (stepsLastEntry > 10000) gridyValue = 5000;
+
 // actives = getArrayFromCSV(csvFile, 2);
 // shorts = getArrayFromCSV(csvFile, 3);
 // longs = getArrayFromCSV(csvFile, 4);
 // outsides = getArrayFromCSV(csvFile, 5); //array.push(dataSplitted[5].slice(0,-1));
 
+//draw graph
 g.clear();
 require("graph").drawLine(g, steps, {
     title: "Steps Counted",
     axes : true,
-    gridy : 1000,
-    y : 50,
+    gridy : gridyValue,
+    y : 50, //offset on screen
+    x : 5, //offset on screen
 });
 
-g.drawString("Start: " + start, 20, 10);
-g.drawString(" Stop: " + stop, 20, 20); 
+g.drawString("Start: " + start, 30, 10);
+g.drawString(" Stop: " + stop, 30, 20); 
 
 //free memory from big variables
 allData = undefined;
