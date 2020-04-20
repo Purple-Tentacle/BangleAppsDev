@@ -19,6 +19,7 @@
 
   var distance = 0; //distance travelled
 
+  const s = require('Storage');
   const SETTINGS_FILE = 'activepedom.settings.json';
   const PEDOMFILE = "activepedom.steps.json";
   var dataFile;
@@ -27,12 +28,15 @@
   let settings;
     //load settings
   function loadSettings() {
-    settings = require('Storage').readJSON(SETTINGS_FILE, 1) || {};
+    settings = s.readJSON(SETTINGS_FILE, 1) || {};
   }
 
   function storeData()  {
     now = new Date();
-    dataFile = require("Storage").open("activepedom.data.json","a");
+    month = now.getMonth() + 1;
+    if (month < 10) month = "0" + month;
+    filename = filename = "activepedom-" + now.getFullYear() + month + now.getDate() + ".data";
+    dataFile = s.open(filename,"a");
     if (dataFile) dataFile.write([
       now.getTime(),
       stepsCounted,
@@ -186,7 +190,7 @@
       stepsTooLong : stepsTooLong,
       stepsOutsideTime : stepsOutsideTime
     };
-    require("Storage").write(PEDOMFILE,d); //write array to file
+    s.write(PEDOMFILE,d); //write array to file
   });
 
   //When Step is registered by firmware
@@ -202,7 +206,7 @@
   });
 
   //Read data from file and set variables
-  let pedomData = require("Storage").readJSON(PEDOMFILE,1);
+  let pedomData = s.readJSON(PEDOMFILE,1);
   if (pedomData) {
     if (pedomData.lastUpdate) lastUpdate = new Date(pedomData.lastUpdate);
     stepsCounted = pedomData.stepsToday|0;
