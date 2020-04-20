@@ -1,3 +1,8 @@
+<<<<<<< HEAD
 0.01: New widget and app!
 0.02: Setting to reset values, timer buzzes at 00:00 and not later (see readme)
+=======
+0.01: New widget and app!
+0.02: Setting to reset values, timer buzzes at 00:00 and not later (see readme)
+>>>>>>> f74e107304cae1a09ab5ebc9f9fa0a4e4e187d27
 0.03: Display only minutes:seconds when less than 1 hour left
