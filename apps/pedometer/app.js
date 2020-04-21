@@ -7,7 +7,24 @@ Modules.addCached("graph",function(){exports.drawAxes=function(b,c,a){function h
     .5)-1,a.gety(0));return a}});
 
 const storage = require("Storage");
+const SETTINGS_FILE = 'activepedom.settings.json';
 var history = 86400000; // 28800000=8h 43200000=12h //86400000=24h
+
+//return setting
+function setting(key) {
+//define default settings
+const DEFAULTS = {
+    'cMaxTime' : 1100,
+    'cMinTime' : 240,
+    'stepThreshold' : 30,
+    'intervalResetActive' : 30000,
+    'stepSensitivity' : 80,
+    'stepGoal' : 10000,
+    'stepLength' : 75,
+};
+if (!settings) { loadSettings(); }
+return (key in settings) ? settings[key] : DEFAULTS[key];
+}
 
 //Convert ms to time
 function getTime(t)  {
@@ -64,8 +81,8 @@ function drawGraph() {
     filename = filename = "activepedom-" + now.getFullYear() + month + now.getDate() + ".data";
     var csvFile = storage.open(filename, "r");
     times = getArrayFromCSV(csvFile, 0);
-    first = getDate(times[0]) + " " + getTime(times[0]);
-    last =  getDate (times[times.length-1]) + " " + getTime(times[times.length-1]);
+    first = getDate(times[0]) + " " + getTime(times[0]); //first entry in datafile
+    last =  getDate (times[times.length-1]) + " " + getTime(times[times.length-1]); //last entry in datafile
     //free memory
     csvFile = undefined;
     times = undefined;
@@ -73,21 +90,24 @@ function drawGraph() {
     //steps
     var csvFile = storage.open(filename, "r");
     steps = getArrayFromCSV(csvFile, 1);
+    first = first + " " + steps[0] + "/" + setting('stepGoal');
+    last = last + " " + steps[steps.length-1] + "/" + setting('stepGoal');
+
     //define y-axis grid labels
     stepsLastEntry = steps[steps.length-1];
     if (stepsLastEntry < 1000) gridyValue = 100;
-    if (stepsLastEntry >= 1000 && stepsLastEntry < 10000) gridyValue = 500;
+    if (stepsLastEntry >= 1000 && stepsLastEntry < 10000) gridyValue = 1000;
     if (stepsLastEntry > 10000) gridyValue = 5000;
 
     //draw
     drawMenu();
-    g.drawString("First: " + first, 40, 30);
-    g.drawString(" Last: " + last, 40, 40);
+    g.drawString("First: " + first, 10, 30);
+    g.drawString(" Last: " + last, 10, 40);
     require("graph").drawLine(g, steps, {
         //title: "Steps Counted",
         axes : true,
         gridy : gridyValue,
-        y : 50, //offset on screen
+        y : 60, //offset on screen
         x : 5, //offset on screen
     });
     //free memory from big variables
@@ -133,6 +153,12 @@ setWatch(function() { //BTN4
 
 setWatch(function() { //BTN5
 }, BTN5, {edge:"rising", debounce:50, repeat:true});
+
+//load settings
+let settings;
+function loadSettings() {
+settings = storage.readJSON(SETTINGS_FILE, 1) || {};
+}
 
 drawMenu();
 
