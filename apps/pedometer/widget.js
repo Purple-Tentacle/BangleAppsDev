@@ -34,8 +34,10 @@
   function storeData()  {
     now = new Date();
     month = now.getMonth() + 1; //month is 0-based
+    day = now.getDate();
     if (month < 10) month = "0" + month; //leading 0
-    filename = filename = "activepedom" + now.getFullYear() + month + now.getDate() + ".data"; //new file for each day
+    if (day < 10) day = "0" + day; //leading 0
+    filename = filename = "activepedom" + now.getFullYear() + month + day + ".data"; //new file for each day
     dataFile = s.open(filename,"a");
     if (dataFile) { //check if filen already exists
       if (dataFile.getLength() == 0) {
