@@ -1,4 +1,4 @@
-(() => {
+﻿(() => {
 
 //Graph module, as long as modules are not added by the app loader
 Modules.addCached("graph",function(){exports.drawAxes=function(b,c,a){function h(a){return e+m*(a-t)/x}function l(a){return f+g-g*(a-n)/u}var k=a.padx||0,d=a.pady||0,t=-k,w=c.length+k-1,n=(void 0!==a.miny?a.miny:a.miny=c.reduce(function(a,b){return Math.min(a,b)},c[0]))-d;c=(void 0!==a.maxy?a.maxy:a.maxy=c.reduce(function(a,b){return Math.max(a,b)},c[0]))+d;a.gridy&&(d=a.gridy,n=d*Math.floor(n/d),c=d*Math.ceil(c/d));var e=a.x||0,f=a.y||0,m=a.width||b.getWidth()-(e+1),g=a.height||b.getHeight()-(f+1);a.axes&&(null!==a.ylabel&&
@@ -8,7 +8,7 @@ Modules.addCached("graph",function(){exports.drawAxes=function(b,c,a){function h
 
 const storage = require("Storage");
 const SETTINGS_FILE = 'sleeptrack.settings.json';
-const DATA_FILE = "sleeptrack2.data";
+const DATA_FILE = "sleeptrack3.data";
 
 //return setting
 function setting(key) {
@@ -26,7 +26,6 @@ return (key in settings) ? settings[key] : DEFAULTS[key];
 function getTime(t, tz)  {
     date = new Date(t);
     offset = date.getTimezoneOffset() / 60;
-    //var milliseconds = parseInt((t % 1000) / 100),
     seconds = Math.floor((t / 1000) % 60);
     minutes = Math.floor((t / (1000 * 60)) % 60);
     hours = Math.floor((t / (1000 * 60 * 60)) % 24);
@@ -54,8 +53,8 @@ function getArrayFromCSV(file, column) {
     now = new Date();
     while ((nextLine = file.readLine())) { //as long as there is a next line
         if(nextLine) {
-            dataSplitted = nextLine.split(','); //split line, 
-            array.push(dataSplitted[column]);
+            dataSplitted = nextLine.split(','); //split line
+            if (dataSplitted[1] == 1) array.push(dataSplitted[column]);
         }
         i++;
     }
@@ -68,6 +67,7 @@ function drawGraph() {
     if (month < 10) month = "0" + month;
     var csvFile = storage.open(DATA_FILE, "r");
     times = getArrayFromCSV(csvFile, 0);
+    print("times");
     first = times[0]; //first entry in datafile
     last =  times[times.length-1]; //last entry in datafile
     length = getTime(last-first, 0);
@@ -80,6 +80,7 @@ function drawGraph() {
     //steps
     var csvFile = storage.open(DATA_FILE, "r");
     active = getArrayFromCSV(csvFile, 1);
+    print("active");
 
     //draw
     drawMenu();
@@ -87,17 +88,18 @@ function drawGraph() {
     g.drawString("  Stop: " + last, 10, 30);
     g.drawString("Length: " + length, 10, 40);
     g.drawString("Length: " + length, 10, 40);
-    require("graph").drawBar(g, active, {
-        axes : true,
-        //gridy : 1,
-        y : 60, //offset on screen
-        x : 5, //offset on screen
-    });
+    // require("graph").drawBar(g, active, {
+    //     axes : true,
+    //     //gridy : 1,
+    //     y : 60, //offset on screen
+    //     x : 5, //offset on screen
+    // });
     //free memory from big variables
     allData = undefined;
     allDataFile = undefined;
     csvFile = undefined;
     times = undefined;
+    active = undefined;
 }
 
 function drawMenu () {

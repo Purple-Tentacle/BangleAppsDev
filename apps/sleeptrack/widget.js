@@ -1,17 +1,16 @@
-(() => {
+﻿(() => {
   var startTimeStep = new Date();
   var stopTimeStep = 0;
-  var timerResetActive = 0;
-  var timerStoreData = 0;
+  // var timerResetActive = 0;
+  // var timerStoreData = 0;
   var width = 23;
   var steps = 0;
-  var active = 0;
 
   const s = require('Storage');
   const SETTINGS_FILE = 'sleeptrack.settings.json';
   const DATA_FILE = "sleeptrack3.data";
   var dataFile;
-  var storeDataInterval = 60*1000;
+  // var storeDataInterval = 60*1000;
   
   let settings;
   function loadSettings() {
@@ -24,11 +23,10 @@
     if (dataFile) {
       dataFile.write([
         now.getTime(),
-        active,
+        "1",
       ].join(",")+"\n");
     }
     dataFile = undefined;
-    active = 0;
   }
 
   function setting(key) {
@@ -59,7 +57,6 @@
     steps++;
     if (steps >= setting('stepThreshold')) {
       steps = 0;
-      active = 1;
       storeData();
     }
     print(steps);
@@ -77,6 +74,6 @@
   });
 
   setStepSensitivity(setting('stepSensitivity'));
-  timerStoreData = setInterval(storeData, storeDataInterval);
+  // timerStoreData = setInterval(storeData, storeDataInterval);
   WIDGETS["sleeptrack"]={area:"br",width:width,draw:draw};
 })();
